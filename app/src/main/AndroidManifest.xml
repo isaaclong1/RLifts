@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".register_new_user"
+            android:label="@string/title_activity_register_new_user"
+            android:parentActivityName=".LoginActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucr.cs180.rlifts.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>
