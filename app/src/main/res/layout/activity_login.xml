@@ -22,7 +22,7 @@
         android:layout_marginBottom="0dp" android:visibility="gone" />
 
     <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
-        android:layout_height="182dp">
+        android:layout_height="match_parent">
 
         <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:orientation="vertical"
@@ -55,63 +55,79 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <Button
+                android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
+                android:layout_width="267dp" android:layout_height="wrap_content"
+                android:text="@string/action_sign_in"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/loginsize"
+                android:textStyle="bold"
+                android:textColor="#ffffff"
+                android:background="#00bbb3"
+                android:layout_alignBottom="@+id/login_form"
+                android:layout_alignLeft="@+id/button"
+                android:layout_alignStart="@+id/button"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="30dp"/>
+
+
+            <Button
+                android:layout_width="267dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/button"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/Create_profile"
+                android:textStyle="bold|normal"
+                android:textSize="@dimen/loginsize"
+                android:textColor="#fefefe"
+                android:background="#00bbb3"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="registerclick"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_margin="30dp"
+                android:layout_gravity="center_horizontal">
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageButton"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/google_plus"
+                    android:background="#263238"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignLeft="@+id/button"
+                    android:layout_alignStart="@+id/button" />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageButton4"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/facebook"
+                    android:background="#263238"
+                    android:layout_alignTop="@+id/imageButton"
+                    android:layout_toRightOf="@+id/imageButton"
+                    android:layout_toEndOf="@+id/imageButton"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp" />
+            </LinearLayout>
+
+
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:layout_width="267dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/Create_profile"
-        android:textStyle="bold|normal"
-        android:textSize="20dp"
-        android:textColor="#fefefe"
-        android:background="#00bbb3"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="registerclick"/>
 
 
 
-    <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/imageButton"
-        android:scaleType="fitCenter"
-        android:src="@drawable/google_plus"
-        android:background="#263238"
-        android:layout_marginLeft="66dp"
-        android:layout_marginStart="66dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button" />
 
-    <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/imageButton4"
-        android:scaleType="fitCenter"
-        android:src="@drawable/facebook"
-        android:background="#263238"
-        android:layout_alignTop="@+id/imageButton"
-        android:layout_toRightOf="@+id/imageButton"
-        android:layout_toEndOf="@+id/imageButton"
-        android:layout_marginLeft="29dp"
-        android:layout_marginStart="29dp" />
 
-    <Button
-        android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
-        android:layout_width="267dp" android:layout_height="wrap_content"
-        android:text="@string/action_sign_in"
-        android:layout_gravity="center_horizontal"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="#ffffff"
-        android:background="#00bbb3"
-        android:layout_alignBottom="@+id/login_form"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button" />
+
 
 
 </RelativeLayout>
