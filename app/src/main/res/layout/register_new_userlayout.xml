@@ -8,7 +8,6 @@
     tools:context="ucr.cs180.rlifts.register_new_user"
     android:background="#263238">
 
-    <!-- Login progress -->
 
 
     <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
@@ -17,7 +16,22 @@
 
         <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:orientation="vertical">
-
+            <!--Profile pics -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <ImageButton
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:id="@+id/imageButton"
+                android:scaleType="fitCenter"
+                android:src="@drawable/addphoto_icon"
+                android:background="#263238"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/editText"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+            </android.support.design.widget.TextInputLayout>
+            <!--First name -->
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -27,7 +41,7 @@
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
-
+            <!--Last name -->
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -39,6 +53,36 @@
                     android:maxLines="1" android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+            <!--User name -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/Username"
+                    android:layout_below="@+id/editText4"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/editText5"
+                    android:layout_alignRight="@+id/editText4"
+                    android:layout_alignEnd="@+id/editText4" />
+            </android.support.design.widget.TextInputLayout>
+            <!--Phone number -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/Phone_num"
+                    android:layout_below="@+id/editText"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/editText2"
+                    android:layout_alignRight="@+id/editText6"
+                    android:layout_alignEnd="@+id/editText6" />
+            </android.support.design.widget.TextInputLayout>
+            <!-- Password -->
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -50,6 +94,7 @@
                     android:maxLines="1" android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+            <!-- confirm password -->
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -61,7 +106,7 @@
                     android:maxLines="1" android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
-
+            <!-- Register button -->
             <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:layout_marginTop="16dp" android:text="@string/register"
@@ -69,6 +114,8 @@
                 android:background="#00bbb3"
                 android:textSize="20dp"
                 android:textColor="#ffffff" />
+
+
 
         </LinearLayout>
     </ScrollView>
