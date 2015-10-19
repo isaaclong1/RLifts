@@ -29,32 +29,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import android.content.Intent;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
- * -Recall that extending a super class allows us to override function implementation in that class,
- * while implementing an interface implies that we are defining functions that have only been declared elsewhere
  */
+public class register_new_user extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    public void registerclick(View view) {
-        Intent intent = new Intent(this, register_new_user.class);
-        startActivity(intent);
-
-    }
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -78,14 +62,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
-    // For now, we are going to keep the logic that auto completes text using
-    // the users contacts
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form. (Initialize views and listeners)
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        setContentView(R.layout.register_new_userlayout);
+        setupActionBar();
+        // Set up the login form.
+    /*    mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -109,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mProgressView = findViewById(R.id.login_progress);*/
     }
 
     private void populateAutoComplete() {
@@ -155,6 +138,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    /**
+     * Set up the {@link android.app.ActionBar}, if the API is available.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setupActionBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            // Show the Up button in the action bar.
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -258,8 +251,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
-        Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
@@ -302,7 +295,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(register_new_user.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -327,37 +320,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                // Send uname and pass to server for verification
-                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
-                JSONObject uname = new JSONObject();
-                uname.put("uname", mEmail);
-                JSONObject pass = new JSONObject();
-                pass.put("password", mPassword);
-                JSONArray cred = new JSONArray();
-                cred.put(uname);
-                cred.put(pass);
-                // the argument may have to be changed to 'path' instead of 'script' for clarity
-                networkRequest.send("../cgi-bin/get-test.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
-                // TODO: handle the json response, which is contained in NetworkRequest.response json array
-                // evaluate the response and return false if not in db and true if ok
-                JSONArray response = networkRequest.getResponse();
-                if(response != null) {
-                    for(int i = 0; i < response.length(); i++) {
-                        System.out.println("Doing check: ");
-                        if(response.getJSONObject(i).get("status").equals("ok")) return true; // subject to change, ideally should not be hardcoded
-                        // TODO: eventually server will send back some basic profile info, capture that here
-                    }
-                }
-
                 // Simulate network access.
-                // Thread.sleep(2000);
-            //} catch (InterruptedException e) {
-                //return false;
-            } catch (Exception e) { // for now all exceptions will return false
-                System.out.println("Debug in background task:\n" + e.getMessage());
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
                 return false;
             }
-
 
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
@@ -366,7 +333,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return pieces[1].equals(mPassword);
                 }
             }
-
 
             // TODO: register the new account here.
             return true;
