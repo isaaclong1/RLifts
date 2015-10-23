@@ -329,23 +329,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             try {
                 // Send uname and pass to server for verification
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+                // table name must come first
+                JSONObject tableName = new JSONObject();
+                tableName.put("Users", "");
                 JSONObject uname = new JSONObject();
-                uname.put("uname", mEmail);
+                uname.put("email", mEmail);
                 JSONObject pass = new JSONObject();
                 pass.put("password", mPassword);
+
                 JSONArray cred = new JSONArray();
+                cred.put(tableName);
                 cred.put(uname);
                 cred.put(pass);
-                // the argument may have to be changed to 'path' instead of 'script' for clarity
+
                 networkRequest.send("../cgi-bin/db-verify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
-                // TODO: handle the json response, which is contained in NetworkRequest.response json array
                 // evaluate the response and return false if not in db and true if ok
                 JSONArray response = networkRequest.getResponse();
                 if(response != null) {
                     for(int i = 0; i < response.length(); i++) {
                         System.out.println("Doing check: ");
                         if(response.getJSONObject(i).get("status").equals("ok")) return true; // subject to change, ideally should not be hardcoded
-                        // TODO: eventually server will send back some basic profile info, capture that here
+                        // TODO: eventually server will send back some basic profile info, capture that here from response array
                     }
                 }
 

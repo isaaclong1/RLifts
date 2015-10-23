@@ -67,7 +67,6 @@ public class NetworkRequest {
             while((line = reader.readLine()) != null) {
                 System.out.println("line: " + line);
                 JSONObject j = new JSONObject(line); // assuming gauranteed JSON responses from our server
-                System.out.println(j);
                 response.put(j);
             }
 
