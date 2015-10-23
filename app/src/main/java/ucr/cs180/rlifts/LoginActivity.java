@@ -337,7 +337,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 cred.put(uname);
                 cred.put(pass);
                 // the argument may have to be changed to 'path' instead of 'script' for clarity
-                networkRequest.send("../cgi-bin/get-test.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                networkRequest.send("../cgi-bin/db-verify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 // TODO: handle the json response, which is contained in NetworkRequest.response json array
                 // evaluate the response and return false if not in db and true if ok
                 JSONArray response = networkRequest.getResponse();
