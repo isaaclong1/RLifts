@@ -28,4 +28,5 @@
         completions."
     </string>
     <string name="title_activity_register_new_user">Register</string>
+    <string name="title_activity_rider_or_driver">RiderOrDriverActivity</string>
 </resources>

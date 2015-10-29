@@ -49,6 +49,7 @@ public class NetworkRequest {
             if(httpMethod.equals("POST")) {
                 // if it's a post, write data first. Data should be sent and received in JSON UTF-8
                 System.out.println("Doing post:");
+                System.out.println(payload);
                 urlConn.setDoOutput(true);
                 urlConn.setChunkedStreamingMode(0);
                 OutputStream out = new BufferedOutputStream(urlConn.getOutputStream());
@@ -66,7 +67,13 @@ public class NetworkRequest {
 
             while((line = reader.readLine()) != null) {
                 System.out.println("line: " + line);
-                JSONObject j = new JSONObject(line); // assuming gauranteed JSON responses from our server
+                JSONObject j = null;
+                try {
+                    j = new JSONObject(line); // assuming gauranteed JSON responses from our server
+                } catch (Exception e) {
+                    System.out.println(""); // so we can see python errors from server and still finish execution
+                }
+
                 response.put(j);
             }
 

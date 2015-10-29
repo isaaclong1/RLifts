@@ -33,11 +33,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.Intent;
@@ -51,7 +46,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public void registerclick(View view) {
-        Intent intent = new Intent(this, register_new_user.class);
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
 
     }
@@ -324,32 +319,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             try {
-                // Send uname and pass to server for verification
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
-                // table name must come first
-                JSONObject tableName = new JSONObject();
-                tableName.put("Users", "");
-                JSONObject uname = new JSONObject();
-                uname.put("email", mEmail);
-                JSONObject pass = new JSONObject();
-                pass.put("password", mPassword);
+
+                JSONObject data = new JSONObject();
+                data.put("Users", "");
+                data.put("email", mEmail);
+                data.put("password", mPassword);
 
                 JSONArray cred = new JSONArray();
-                cred.put(tableName);
-                cred.put(uname);
-                cred.put(pass);
+                cred.put(data);
 
                 networkRequest.send("../cgi-bin/db-verify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
-                // evaluate the response and return false if not in db and true if ok
                 JSONArray response = networkRequest.getResponse();
-                if(response != null) {
-                    for(int i = 0; i < response.length(); i++) {
-                        System.out.println("Doing check: ");
-                        if(response.getJSONObject(i).get("status").equals("ok")) return true; // subject to change, ideally should not be hardcoded
-                        // TODO: eventually server will send back some basic profile info, capture that here from response array
+
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for login existing user.");
+                            return true;
+                        }
                     }
                 }
 
@@ -362,7 +352,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-
+            /*
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
@@ -370,10 +360,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return pieces[1].equals(mPassword);
                 }
             }
+            */
 
-
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override

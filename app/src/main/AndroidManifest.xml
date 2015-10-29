@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <!-- To send network requests to our server -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -26,12 +26,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".register_new_user"
+            android:name=".RegisterActivity"
             android:label="@string/title_activity_register_new_user"
             android:parentActivityName=".LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ucr.cs180.rlifts.LoginActivity" />
+        </activity>
+        <activity
+            android:name=".RiderOrDriverActivity"
+            android:label="@string/title_activity_rider_or_driver"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
 
