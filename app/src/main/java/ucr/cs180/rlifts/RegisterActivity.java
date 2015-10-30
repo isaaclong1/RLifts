@@ -18,6 +18,7 @@ import java.text.ParseException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import android.content.Intent;
 
 /**
  * A login screen that offers login via email/password.
@@ -25,16 +26,13 @@ import java.util.Date;
 
 //written by Terry and Don.
 public class RegisterActivity extends AppCompatActivity {
-    String first_name_str;
-    String last_name_str;
-    String birthday_str;
-    String phone_num_str;
-    String password_str;
-    String confirm_password_str;
-    String username_str;
+    public void registerclick(View view) {
+        Intent intent = new Intent(this, RiderOrDriverActivity.class);
+        startActivity(intent);
+    }
 
     private registerUser mAuthTask = null;
-    /*
+
     private EditText mPasswordView;
     private EditText mBirthdayView;
     private EditText mPhoneNumView;
@@ -42,11 +40,19 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mUsernameView;
     private EditText mFnameView;
     private EditText mLnameView;
-     */
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_new_user);
+
+        mFnameView = ((EditText) findViewById(R.id.firstname));
+        mLnameView = ((EditText) findViewById(R.id.lastname));
+        mUsernameView = ((EditText) findViewById(R.id.Username));
+        mBirthdayView= ((EditText) findViewById(R.id.Birthday));
+        mPhoneNumView = ((EditText) findViewById(R.id.Phone_num));
+        mPasswordView= ((EditText) findViewById(R.id.reg_password));
+        mConfirm_PWView= ((EditText) findViewById(R.id.reg_confirm_password));
 
         Button button = (Button) findViewById(R.id.register_button);
         button.setOnClickListener(new OnClickListener() {
@@ -57,37 +63,19 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void onRegisterClick(View v) {
-        if (v.getId() == R.id.email_sign_in_button) {
-            EditText first_name = ((EditText) findViewById(R.id.firstname));
-            EditText last_name = ((EditText) findViewById(R.id.lastname));
-            EditText username = ((EditText) findViewById(R.id.Username));
-            EditText birthday = ((EditText) findViewById(R.id.Birthday));
-            EditText phone_num = ((EditText) findViewById(R.id.Phone_num));
-            EditText password = ((EditText) findViewById(R.id.reg_password));
-            EditText confirm_password = ((EditText) findViewById(R.id.reg_confirm_password));
-
-            first_name_str = first_name.getText().toString();
-            last_name_str = last_name.getText().toString();
-            username_str = username.getText().toString();
-            birthday_str = birthday.getText().toString();
-            phone_num_str = phone_num.getText().toString();
-            password_str = password.getText().toString();
-            confirm_password_str = confirm_password.getText().toString();
-
-            if (!password_str.equals(confirm_password_str)) {
-                //popup msg
-                Toast pass = Toast.makeText(RegisterActivity.this, "Passwords don't match", Toast.LENGTH_SHORT);
-                pass.show();
-            }
-        }
-    }
     private void attemptRegister(){
         if(mAuthTask != null) {
             return;
         }
 
-        /*
+        mPasswordView.setError(null);
+        mBirthdayView.setError(null);
+        mPhoneNumView.setError(null);
+        mConfirm_PWView.setError(null);
+        mUsernameView.setError(null);
+        mFnameView.setError(null);
+        mLnameView.setError(null);
+
         String password = mPasswordView.getText().toString();
         String birthday = mBirthdayView.getText().toString();
         String phone = mPhoneNumView.getText().toString();
@@ -98,6 +86,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         boolean cancel = false;
         View focusView = null;
+
+        /*
 
         if(!TextUtils.isEmpty(password) && !isPasswordValid(password))
         {
@@ -142,7 +132,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
         else { */
-        mAuthTask = new registerUser(first_name_str, last_name_str, birthday_str, phone_num_str, confirm_password_str, password_str, username_str);
+        mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username);
         mAuthTask.execute((Void) null);
 
 
@@ -191,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
                 JSONObject data = new JSONObject();
-                data.put("Users", "");
+                data.put("Users", "Users");
                 data.put("first_name", mFirst_name);
                 data.put("last_name", mLast_name);
                 data.put("username", musername);
@@ -201,6 +191,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
+                System.out.println(cred);
 
                 networkRequest.send("../cgi-bin/db-add.py", "POST", cred);
                 JSONArray response = networkRequest.getResponse();
