@@ -48,8 +48,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void registerclick(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
-
     }
+    public void GoogleClick(View view){
+        Intent intent = new Intent(this, GoogleLogin.class);
+        startActivity(intent);
+    }
+
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -103,8 +107,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    protected void onStart() {
+        super.onStart();
+        //mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //mGoogleApiClient.disconnect();
     }
 
     private void populateAutoComplete() {

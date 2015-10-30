@@ -103,7 +103,8 @@
                     android:background="#263238"
                     android:layout_alignParentBottom="true"
                     android:layout_alignLeft="@+id/button"
-                    android:layout_alignStart="@+id/button" />
+                    android:layout_alignStart="@+id/button"
+                    android:onClick="GoogleClick" />
 
                 <ImageButton
                     android:layout_width="50dp"

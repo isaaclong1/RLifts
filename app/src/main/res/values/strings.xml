@@ -4,6 +4,11 @@
     <!-- Strings related to login -->
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
+    <string name="sign_out">Sign out</string>
+    <string name="signing_in">Signing in</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="title_text">Title Text</string>
+    <string name="desc_google_icon">Some description</string>
     <string name="prompt_email">Email</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
@@ -29,4 +34,5 @@
     </string>
     <string name="title_activity_register_new_user">Register</string>
     <string name="title_activity_rider_or_driver">RiderOrDriverActivity</string>
+    <string name="title_activity_google_login">GoogleLogin</string>
 </resources>

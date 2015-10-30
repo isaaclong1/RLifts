@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <!-- To send network requests to our server -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -37,6 +40,15 @@
             android:name=".RiderOrDriverActivity"
             android:label="@string/title_activity_rider_or_driver"
             android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".GoogleLogin"
+            android:label="@string/title_activity_google_login"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucr.cs180.rlifts.LoginActivity" />
         </activity>
     </application>
 
