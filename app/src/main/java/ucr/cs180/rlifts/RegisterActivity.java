@@ -19,6 +19,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import android.content.Intent;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import com.google.android.gms.plus.Plus;
 
 /**
  * A login screen that offers login via email/password.
@@ -40,11 +43,18 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mUsernameView;
     private EditText mFnameView;
     private EditText mLnameView;
+    private EditText mEmailView;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_new_user);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("username");
+            System.out.println(value);
+        }
 
         mFnameView = ((EditText) findViewById(R.id.firstname));
         mLnameView = ((EditText) findViewById(R.id.lastname));
@@ -53,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
         mPhoneNumView = ((EditText) findViewById(R.id.Phone_num));
         mPasswordView= ((EditText) findViewById(R.id.reg_password));
         mConfirm_PWView= ((EditText) findViewById(R.id.reg_confirm_password));
+        mEmailView = ((EditText) findViewById(R.id.email));
 
         Button button = (Button) findViewById(R.id.register_button);
         button.setOnClickListener(new OnClickListener() {
@@ -75,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
         mUsernameView.setError(null);
         mFnameView.setError(null);
         mLnameView.setError(null);
+        mEmailView.setError(null);
 
         String password = mPasswordView.getText().toString();
         String birthday = mBirthdayView.getText().toString();
@@ -83,7 +95,9 @@ public class RegisterActivity extends AppCompatActivity {
         String username = mUsernameView.getText().toString();
         String fname = mFnameView.getText().toString();
         String lname = mLnameView.getText().toString();
+        String email = mEmailView.getText().toString();
 
+        //String gmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         boolean cancel = false;
         View focusView = null;
 
@@ -132,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
         else { */
-        mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username);
+        mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username, email);
         mAuthTask.execute((Void) null);
 
 
@@ -165,8 +179,9 @@ public class RegisterActivity extends AppCompatActivity {
         private final String mpassword;
         private final String mconfirm_password;
         private final String musername;
+        private final String mEmail;
 
-        registerUser(String first_name, String last_name, String Birthday, String phone_num, String password, String confirm_password, String username){
+        registerUser(String first_name, String last_name, String Birthday, String phone_num, String password, String confirm_password, String username, String email){
             mFirst_name = first_name;
             mLast_name = last_name;
             mBirthday = Birthday;
@@ -174,6 +189,7 @@ public class RegisterActivity extends AppCompatActivity {
             mpassword = password;
             mconfirm_password = confirm_password;
             musername = username;
+            mEmail = email;
         }
 
         protected Boolean doInBackground(Void... params) {
@@ -188,6 +204,7 @@ public class RegisterActivity extends AppCompatActivity {
                 data.put("birthday", mBirthday);
                 data.put("phone_num", mphone_num);
                 data.put("password", mpassword);
+                data.put("email", mEmail);
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
