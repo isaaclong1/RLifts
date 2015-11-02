@@ -167,10 +167,14 @@ package ucr.cs180.rlifts;
                     break;
                 case R.id.cont_button:
                     Intent intent = new Intent(this, RegisterActivity.class);
-                    //Bundle bundle = new Bundle();
-                    //bundle.putString("username", userName.getText().toString());
-                    intent.putExtra("username", userName.getText().toString());
-                    intent.putExtra("email", userEmail.getText().toString());
+                    Bundle bundle = new Bundle();
+                    //Person signedInUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                    //if(signedInUser.hasDisplayName()){
+                     //   bundle.putString("username", userName.getText().toString());
+                    //}
+                    bundle.putString("username", userName.getText().toString());
+                    bundle.putString("email",userEmail.getText().toString());
+                    intent.putExtras(bundle);
                     startActivity(intent);
             }
             /*Intent intent = new Intent(this, RegisterActivity.class);
@@ -390,7 +394,7 @@ package ucr.cs180.rlifts;
 
                 if (signedInUser.hasDisplayName()) {
                     username = signedInUser.getDisplayName();
-                    this.userName.setText("Name: " + username);
+                    this.userName.setText(username);
                 }
 
                 if (signedInUser.hasTagline()) {
@@ -407,7 +411,7 @@ package ucr.cs180.rlifts;
 
                 if (signedInUser.hasBirthday()) {
                     birthday = signedInUser.getBirthday();
-                    this.userBirthday.setText("DOB " + birthday);
+                    this.userBirthday.setText(birthday);
                     this.userBirthday.setVisibility(View.VISIBLE);
                 }
 
@@ -418,7 +422,7 @@ package ucr.cs180.rlifts;
                 }
 
                 email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                this.userEmail.setText("Email: " + email);
+                this.userEmail.setText(email);
 
                 if (signedInUser.hasImage()) {
                     String userProfilePicUrl = signedInUser.getImage().getUrl();
