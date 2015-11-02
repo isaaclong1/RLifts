@@ -12,7 +12,7 @@ public class FacebookLogin extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_facebook_login);
+        //setContentView(R.layout.activity_facebook_login);
 
     }
 

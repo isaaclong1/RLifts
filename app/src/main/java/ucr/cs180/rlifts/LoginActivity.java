@@ -173,7 +173,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -221,8 +220,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(email, password, LoginActivity.this);
             mAuthTask.execute((Void) null);
+
+            // finish is no longer called after the login task, start new intent here
+            // how to know if this was successful or not?
+            //Intent intent = new Intent(this, HomeActivity.class);
+            //startActivity(intent);
         }
     }
 
@@ -334,8 +338,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private LoginActivity mActivity;
 
-        UserLoginTask(String email, String password) {
+        UserLoginTask(String email, String password, LoginActivity activity) {
+            mActivity = activity;
             mEmail = email;
             mPassword = password;
         }
@@ -394,7 +400,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                finish();
+                // How to call an intent here?
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                startActivity(intent);
+                //finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

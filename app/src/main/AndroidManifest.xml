@@ -59,6 +59,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ucr.cs180.rlifts.LoginActivity" />
         </activity>
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

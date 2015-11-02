@@ -36,4 +36,10 @@
     <string name="title_activity_rider_or_driver">RiderOrDriverActivity</string>
     <string name="title_activity_google_login">GoogleLogin</string>
     <string name="title_activity_facebook_login">FacebookLogin</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
