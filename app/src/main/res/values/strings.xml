@@ -4,6 +4,7 @@
     <!-- Strings related to login -->
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
+
     <string name="sign_out">Sign out</string>
     <string name="signing_in">Signing in</string>
     <string name="disconnect">Disconnect</string>

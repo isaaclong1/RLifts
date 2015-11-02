@@ -30,7 +30,8 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_below="@+id/editText"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignParentEnd="true"
+                    android:onClick="photoclick"/>
             </android.support.design.widget.TextInputLayout>
 
             <!--First name -->
@@ -149,7 +150,7 @@
                 android:textSize="20dp"
                 android:textColor="#ffffff"
                 android:nestedScrollingEnabled="false"
-                android:onClick="onRegisterClick" />
+                android:onClick="onclick" />
 
 
 

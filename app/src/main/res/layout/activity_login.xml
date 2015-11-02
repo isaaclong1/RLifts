@@ -35,7 +35,7 @@
                 <AutoCompleteTextView android:id="@+id/email" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress" android:maxLines="1"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:textColor="#F5F5F5"
                     android:textIsSelectable="false"
                     android:textColorHint="#F5F5F5" />
