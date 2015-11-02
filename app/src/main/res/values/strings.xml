@@ -35,4 +35,5 @@
     <string name="title_activity_register_new_user">Register</string>
     <string name="title_activity_rider_or_driver">RiderOrDriverActivity</string>
     <string name="title_activity_google_login">GoogleLogin</string>
+    <string name="title_activity_facebook_login">FacebookLogin</string>
 </resources>

@@ -60,6 +60,7 @@ package ucr.cs180.rlifts;
         Button sharePostButton;
         Button shareMediaButton;
         Button revokeAccessButton;
+        Button cont_button;
 
         // For communicating with Google APIs
         private GoogleApiClient mGoogleApiClient;
@@ -85,6 +86,9 @@ package ucr.cs180.rlifts;
             shareMediaButton.setOnClickListener(this);
             revokeAccessButton = (Button) findViewById(R.id.revoke_access_button);
             revokeAccessButton.setOnClickListener(this);
+            cont_button = (Button) findViewById(R.id.cont_button);
+            cont_button.setOnClickListener(this);
+
             findViewById(R.id.user_options_button).setOnClickListener(this);
 
             userOptionsLayout = (LinearLayout) findViewById(R.id.user_options_layout);
@@ -96,6 +100,7 @@ package ucr.cs180.rlifts;
             userLocation = (TextView) findViewById(R.id.user_location);
             userBirthday = (TextView) findViewById((R.id.user_birthday));
             userTagLine = (TextView) findViewById((R.id.user_tagLine));
+
 
 
             // Initializing google plus api client
@@ -160,13 +165,20 @@ package ucr.cs180.rlifts;
                     userInfoLayout.setVisibility(View.INVISIBLE);
                     userOptionsLayout.setVisibility(View.VISIBLE);
                     break;
+                case R.id.cont_button:
+                    Intent intent = new Intent(this, RegisterActivity.class);
+                    //Bundle bundle = new Bundle();
+                    //bundle.putString("username", userName.getText().toString());
+                    intent.putExtra("username", userName.getText().toString());
+                    intent.putExtra("email", userEmail.getText().toString());
+                    startActivity(intent);
             }
-            Intent intent = new Intent(this, RegisterActivity.class);
+            /*Intent intent = new Intent(this, RegisterActivity.class);
             //Bundle bundle = new Bundle();
             //bundle.putString("username", userName.getText().toString());
             intent.putExtra("username", userName.getText().toString());
             intent.putExtra("email", userEmail.getText().toString());
-            startActivity(intent);
+            startActivity(intent); */
 
         }
 
@@ -182,12 +194,16 @@ package ucr.cs180.rlifts;
                 sharePostButton.setEnabled(true);
                 shareMediaButton.setEnabled(true);
                 revokeAccessButton.setEnabled(true);
+                cont_button.setEnabled(true);
+
+
             } else {
                 signOutButton.setEnabled(false);
                 userInfoButton.setEnabled(false);
                 sharePostButton.setEnabled(false);
                 shareMediaButton.setEnabled(false);
                 revokeAccessButton.setEnabled(false);
+                cont_button.setEnabled(false);
             }
         }
 
@@ -374,7 +390,7 @@ package ucr.cs180.rlifts;
 
                 if (signedInUser.hasDisplayName()) {
                     username = signedInUser.getDisplayName();
-                    this.userName.setText("Name: " + userName);
+                    this.userName.setText("Name: " + username);
                 }
 
                 if (signedInUser.hasTagline()) {

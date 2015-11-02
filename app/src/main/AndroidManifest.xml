@@ -50,6 +50,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ucr.cs180.rlifts.LoginActivity" />
         </activity>
+        <activity
+            android:name=".FacebookLogin"
+            android:label="@string/title_activity_facebook_login"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucr.cs180.rlifts.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>
