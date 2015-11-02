@@ -307,7 +307,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
         else { */
-        mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username, email);
+        mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username, email, RegisterActivity.this);
         mAuthTask.execute((Void) null);
     }
 
@@ -340,7 +340,9 @@ public class RegisterActivity extends AppCompatActivity {
         private final String musername;
         private final String mEmail;
 
-        registerUser(String first_name, String last_name, String Birthday, String phone_num, String password, String confirm_password, String username, String email){
+        private RegisterActivity mActivity;
+
+        registerUser(String first_name, String last_name, String Birthday, String phone_num, String password, String confirm_password, String username, String email, RegisterActivity activity){
             mFirst_name = first_name;
             mLast_name = last_name;
             mBirthday = Birthday;
@@ -349,6 +351,8 @@ public class RegisterActivity extends AppCompatActivity {
             mconfirm_password = confirm_password;
             musername = username;
             mEmail = email;
+
+            mActivity = activity;
         }
 
         protected Boolean doInBackground(Void... params) {
@@ -395,6 +399,21 @@ public class RegisterActivity extends AppCompatActivity {
                 return false;
             }
             return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+
+            if (success) {
+                // How to call an intent here?
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                startActivity(intent);
+                //finish();
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
         }
 
     }
