@@ -78,6 +78,10 @@ public class RegisterActivity extends AppCompatActivity {
         if(mAuthTask != null) {
             return;
         }
+        Intent getIntent = getIntent();
+        Bundle extrasBundle = getIntent.getExtras();
+
+
 
         mPasswordView.setError(null);
         mBirthdayView.setError(null);
