@@ -9,4 +9,23 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior" tools:showIn="@layout/app_bar_home"
     tools:context="ucr.cs180.rlifts.HomeActivity">
 
+    <FrameLayout
+        android:id="@+id/flContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+    <!-- apparently you cannot replace a fragment that is static in xml have to insert the fragment programmatically
+    <FrameLayout android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/content_home">
+        <TextView android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:text="Welcome to RLifts! Open the navigation drawer to get started.">
+
+        </TextView>
+    </FrameLayout>
+    -->
+
 </RelativeLayout>

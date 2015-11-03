@@ -2,11 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_camara" android:icon="@drawable/profile"
-            android:title="Profile" />
-        <item android:id="@+id/nav_gallery" android:icon="@drawable/ic_action_name2"
+        <item android:id="@+id/nav_profile" android:icon="@drawable/profile"
+            android:title="Profile"
+            android:checked="true"/>
+        <item android:id="@+id/nav_rider" android:icon="@drawable/ic_action_name2"
             android:title="Rider" />
-        <item android:id="@+id/nav_slideshow" android:icon="@drawable/car186_2"
+        <item android:id="@+id/nav_driver" android:icon="@drawable/car186_2"
             android:title="Driver" />
         <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
             android:title="Tools" />
