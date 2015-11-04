@@ -4,7 +4,10 @@
     <!-- Strings related to login -->
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
-
+    <string name="Select">Select</string>
+    <string name="Post_ride">Post ride</string>
+    <string name="Driver_destination">Destination</string>
+    <string name="Driver_start">Start</string>
     <string name="sign_out">Sign out</string>
     <string name="signing_in">Signing in</string>
     <string name="disconnect">Disconnect</string>
