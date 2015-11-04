@@ -29,10 +29,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -81,13 +92,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    //Testing for facebook login
+    private TextView info;
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
+
     // For now, we are going to keep the logic that auto completes text using
     // the users contacts
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        //Facebook login stuff begin
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        setContentView(R.layout.activity_login);
+        info = (TextView)findViewById(R.id.info);
+        loginButton = (LoginButton)findViewById(R.id.facebook_login_button);
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        //Facebook login stuff end
+        //setContentView(R.layout.activity_login);
         // Set up the login form. (Initialize views and listeners)
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -113,8 +138,50 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
 
+        //Facebook functions begin
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        // Application code
+                        try {
+                            info.setText("User Name: " + object.getString("first_name") + "\n" + "Email: " + object.getString("email"));
+
+                        } catch (JSONException e) {
+                            //Catch error
+                        }
+                    }
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "first_name,last_name,email");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+            }
+
+            @Override
+            public void onCancel() {
+                info.setText("Login attempt canceled.");
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                info.setText("Login attempt failed.");
+            }
+        });
+        //facebook functions end
+
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    //Facebook function
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     protected void onStart() {
@@ -278,8 +345,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
-        Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
@@ -372,7 +439,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 // Simulate network access.
                 // Thread.sleep(2000);
-            //} catch (InterruptedException e) {
+                //} catch (InterruptedException e) {
                 //return false;
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
