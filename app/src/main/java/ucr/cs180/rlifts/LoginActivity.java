@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Intent intent = new Intent(this, FacebookLogin.class);
         startActivity(intent);
     }
-
     /**
      * Id to identity READ_CONTACTS permission request.
      */

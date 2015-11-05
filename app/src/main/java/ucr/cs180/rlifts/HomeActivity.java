@@ -16,12 +16,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import java.net.URI;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener, RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener {
 
+    private EditText StartView;
+    private EditText DestinationView;
+
+    public void post_ride_click(View view){
+        StartView = (EditText)findViewById(R.id.start);
+        DestinationView = (EditText) findViewById(R.id.destination);
+        String start = StartView.getText().toString();
+        String dest = DestinationView.getText().toString();
+        GoogleDistanceRequest gdr = new GoogleDistanceRequest();
+        String response = gdr.makeConnection(start, dest);
+        System.out.println("In HomeActivity: " + response);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +61,7 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 
     }
 
