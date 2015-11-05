@@ -48,7 +48,6 @@ public class HomeActivity extends AppCompatActivity
                     "Ride posted!", Toast.LENGTH_LONG).show();
         }
 
-
     }
 
     @Override
@@ -194,7 +193,6 @@ public class HomeActivity extends AppCompatActivity
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
 
-                System.out.println("Jai: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
