@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,7 +18,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.net.URI;
 
 public class HomeActivity extends AppCompatActivity
@@ -25,15 +33,25 @@ public class HomeActivity extends AppCompatActivity
 
     private EditText StartView;
     private EditText DestinationView;
+    private String uid;
 
-    public void post_ride_click(View view){
-        StartView = (EditText)findViewById(R.id.start);
+    public void post_ride_click(View view) throws IOException {
+        StartView = (EditText) findViewById(R.id.start);
         DestinationView = (EditText) findViewById(R.id.destination);
         String start = StartView.getText().toString();
         String dest = DestinationView.getText().toString();
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
-        String response = gdr.makeConnection(start, dest);
-        System.out.println("In HomeActivity: " + response);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("global_uid");
+            uid = value;
+        }
+        boolean flag = gdr.makeConnection(start, dest, uid);
+        if (flag) {
+            Toast.makeText(getApplicationContext(),
+                    "Ride posted!", Toast.LENGTH_LONG).show();
+        }
+
 
     }
 
@@ -61,8 +79,7 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
+        //new Get_Rides().execute();
     }
 
     @Override
@@ -153,4 +170,48 @@ public class HomeActivity extends AppCompatActivity
     public void onFragmentInteractionD(Uri uri) {
 
     }
+
+    /*private class Get_Rides extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Rides", "Rides");
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/jai-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for login existing user.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    } */
 }
+
+

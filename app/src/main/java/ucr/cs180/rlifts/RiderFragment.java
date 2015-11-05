@@ -2,11 +2,18 @@ package ucr.cs180.rlifts;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /**
@@ -23,6 +30,7 @@ public class RiderFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -37,6 +45,23 @@ public class RiderFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment RiderFragment.
      */
+    private static String[] RIDES = {};
+
+
+    public static RiderFragment newInstance() {
+        Bundle args = new Bundle();
+        RiderFragment fragment = new RiderFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View mainView = inflater.inflate(R.layout.fragment_rider, container, false);
+        ListView listView = (ListView) mainView.findViewById(R.id.listView);
+        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, RIDES));
+        return mainView;
+    }
     // TODO: Rename and change types and number of parameters
     public static RiderFragment newInstance(String param1, String param2) {
         RiderFragment fragment = new RiderFragment();
@@ -58,13 +83,6 @@ public class RiderFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rider, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

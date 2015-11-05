@@ -55,6 +55,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    private String global_uid;
     public void registerclick(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
@@ -431,30 +433,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
                             System.out.println("Successfully received confirmation from server for login existing user.");
+                            global_uid = response.getJSONObject(i).get("UID").toString();
+                            System.out.println(global_uid);
                             return true;
                         }
                     }
                 }
 
-                // Simulate network access.
-                // Thread.sleep(2000);
-                //} catch (InterruptedException e) {
-                //return false;
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
                 return false;
             }
-
-            /*
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-            */
-
             return false;
         }
 
@@ -466,6 +455,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 // How to call an intent here?
                 Intent intent = new Intent(mActivity, HomeActivity.class);
+                Bundle my_bundle = new Bundle();
+                my_bundle.putString("global_uid", global_uid);
+                intent.putExtra("global_uid", global_uid);
                 startActivity(intent);
                 //finish();
             } else {
@@ -478,6 +470,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
+        }
+
+        protected String get_uid(){
+            return global_uid;
         }
     }
 }

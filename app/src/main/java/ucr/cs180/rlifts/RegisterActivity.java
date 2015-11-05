@@ -394,7 +394,7 @@ public class RegisterActivity extends AppCompatActivity {
                 System.out.println("Debug in RegisterNewUser in background: \n" + e.getMessage());
                 return false;
             }
-            return true;
+            return false;
         }
 
         @Override
