@@ -23,8 +23,8 @@
     <string name="First_name">First Name</string>
     <string name="Last_name">Last Name</string>
     <string name="Username">Username</string>
-    <string name="Birthday">Birthday</string>
-    <string name="Phone_num">Phone Number</string>
+    <string name="Birthday">Birthday(MM/DD/YYYY)</string>
+    <string name="Phone_num">Phone Number(1234567890)</string>
     <string name="Submit">Submit</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Log in</string>

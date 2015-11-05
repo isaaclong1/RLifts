@@ -41,11 +41,7 @@ public class HomeActivity extends AppCompatActivity
         String start = StartView.getText().toString();
         String dest = DestinationView.getText().toString();
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String value = extras.getString("global_uid");
-            uid = value;
-        }
+
         boolean flag = gdr.makeConnection(start, dest, uid);
         if (flag) {
             Toast.makeText(getApplicationContext(),
@@ -79,7 +75,16 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //new Get_Rides().execute();
+
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("global_uid");
+            uid = value;
+        }
+
+        new Get_Rides().execute();
+
     }
 
     @Override
@@ -171,7 +176,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    /*private class Get_Rides extends AsyncTask<String, Void, Void> {
+    private class Get_Rides extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
@@ -180,13 +185,16 @@ public class HomeActivity extends AppCompatActivity
 
                 JSONObject data = new JSONObject();
                 data.put("Rides", "Rides");
+                data.put("queryType", "allRides");
+                data.put("data", uid);
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
 
-                networkRequest.send("../cgi-bin/jai-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
 
+                System.out.println("Jai: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
@@ -211,7 +219,7 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected void onProgressUpdate(Void... values) {
         }
-    } */
+    }
 }
 
 
