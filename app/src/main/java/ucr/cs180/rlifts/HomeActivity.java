@@ -41,7 +41,7 @@ public class HomeActivity extends AppCompatActivity
     private JSONArray send_over;
     private static boolean flag = false;
     private static boolean run_showalert = true;
-    private static int m_id;
+    private static String m_id;
     private static String global_status;
     private JSONArray profileData;
     private JSONArray picture;
@@ -84,7 +84,7 @@ public class HomeActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        drawer.openDrawer(Gravity.LEFT); 
+        drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -107,11 +107,12 @@ public class HomeActivity extends AppCompatActivity
 
                 if(flag) {
                     showAlert();
+                    flag = false;
                 }
 
-                ha.postDelayed(this, 5000);
+                ha.postDelayed(this, 1000);
             }
-        }, 5000);
+        }, 1000);
 
         new getProfileInformation().execute();
     }
@@ -272,20 +273,31 @@ public class HomeActivity extends AppCompatActivity
                     JSONObject ride = rideList.getJSONObject(i);
                     message_id = ride.getString("MID");
                     status = ride.getString("status");
-                    m_id = Integer.parseInt(message_id);
+                    m_id = message_id;
                     global_status = status;
                 }
 
-                if (response != null) {
-                    for (int i = 0; i < response.length(); i++) {
-                        if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for getting rides.");
-                            //return true;
-                            System.out.println("OVER HERE");
-                            flag = true;
-                        }
+                JSONObject otherdata = new JSONObject();
+                otherdata.put("Messages", "Messages");
+                otherdata.put("queryType", "setMessageStatus");
+                otherdata.put("MID", m_id);
+
+
+                JSONArray othercred = new JSONArray();
+                othercred.put(otherdata);
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", othercred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray otherresponse = networkRequest.getResponse();
+
+                for (int i = 0; i < response.length(); i++) {
+                    if (response.getJSONObject(i).get("status").equals("ok")) {
+                        System.out.println("Successfully received confirmation from server for getting rides.");
+                        //return true;
+                        System.out.println("OVER HERE");
+                        flag = true;
                     }
                 }
+
                 System.out.println("MESSAGES : " + response);
 
             } catch (Exception e) { // for now all exceptions will return false
