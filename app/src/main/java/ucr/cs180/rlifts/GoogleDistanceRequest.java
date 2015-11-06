@@ -82,6 +82,9 @@ public class GoogleDistanceRequest{
     private String distance1;
     private String duration;
     private String delim = ":";
+    private String delimSpace = " ";
+    private Double BASEFARE = 5.00;
+    private String DOLLARSIGN = "$";
 
     //use these for your JSON Object to send to Create RIDES table
     private String db_pickup;
@@ -89,6 +92,7 @@ public class GoogleDistanceRequest{
     private String db_cost;
     private String db_distance;
     private String db_duration;
+    private Double db_costFinal;
 
 
     private class LongOperation extends AsyncTask<String, Void, String> {
@@ -193,18 +197,29 @@ public class GoogleDistanceRequest{
             db_destination = db_destination.replace("\"","");
 
             db_distance = db_distance.replace("\"","");
+
+            //creating cost, should make a function but for now just forcing distance miles into $
+            str_array = db_distance.split(delimSpace);
+            db_cost = str_array[1];
+
+            double final_cost = Double.parseDouble(db_cost);
+            final_cost = final_cost + BASEFARE;
+            db_costFinal = final_cost;
+
+            //System.out.println("THE COST IS: "+ DOLLARSIGN +  + final_cost);
+
             db_duration = db_duration.replace("\"","");
 
             System.out.println(db_pickup + " " + db_destination + " " + db_duration + " " + db_distance );
 
             //calculateRide(db_duration, db_distance);
-            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance);
+            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance, db_costFinal);
 
 
             return "Executed";
         }
 
-        protected boolean db_addRide (String pickup, String destination, String duration,String distance)
+        protected boolean db_addRide (String pickup, String destination, String duration,String distance, Double Cost)
         {
             System.out.println(destination);
             try {
@@ -216,6 +231,7 @@ public class GoogleDistanceRequest{
                 data.put("destination", destination);
                 data.put("distance", distance);
                 data.put("duration", duration );
+                data.put("cost", Cost);
                 data.put("UID", passed_uid);
                 //data.put("cost", );
 
@@ -242,7 +258,7 @@ public class GoogleDistanceRequest{
         }
 
         public boolean tell_home_activity(){
-            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance);
+            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance,db_costFinal);
             return result;
         }
 

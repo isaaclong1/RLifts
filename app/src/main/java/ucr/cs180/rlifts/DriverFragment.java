@@ -39,6 +39,8 @@ public class DriverFragment extends Fragment {
      * @return A new instance of fragment DriverFragment.
      */
     // TODO: Rename and change types and number of parameters
+
+
     public static DriverFragment newInstance(String param1, String param2) {
         DriverFragment fragment = new DriverFragment();
         Bundle args = new Bundle();

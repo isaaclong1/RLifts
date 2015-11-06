@@ -1,22 +1,22 @@
 package ucr.cs180.rlifts;
 
 import android.app.Activity;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Dictionary;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -47,7 +47,9 @@ public class RiderFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment RiderFragment.
      */
-    private static String[] RIDES = {};
+    public static String[] RIDES = {"TEMP", "temp", "temp", "temp"};
+    public static List<String> rides_list = new ArrayList<String>();
+
     //private static JSONArray received_json;
 
     public static RiderFragment newInstance() {
@@ -61,7 +63,14 @@ public class RiderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.fragment_rider, container, false);
         ListView listView = (ListView) mainView.findViewById(R.id.listView);
-        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, RIDES));
+        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, rides_list));
+        listView.setClickable(true);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
         return mainView;
     }
     // TODO: Rename and change types and number of parameters
@@ -78,12 +87,46 @@ public class RiderFragment extends Fragment {
 
     public static void parse_json_for_displaying(JSONArray response) {
         try {
-            String line = response.getJSONObject(0).toString();
-            
-            //for(int i = response.length(); i > 0; i++)
-            //String temp = response.getJSONObject(0).getString("ride1");
+            ArrayList <String> list = new ArrayList<String>();
 
-        }catch (Exception e) {}
+            String distance = "";
+            String pickup = "";
+            String destination = "";
+            String cost  = "";
+            String duration = "";
+            String ride_string = "";
+            String uid = "";
+            String mpickup = "Pick Up:";
+            String mdestin = " \nDestination:";
+            String mdist = "\nDistance: ";
+            String mdur = " \nDuration: ";
+            String mcost = "\nEstimated Cost: $";
+            String mdriverID = "\nYour Driver's ID #: ";
+            String newline = "\n";
+
+            //THIS HOW YOU ACCESS THE OBJECT INFORMATION
+            JSONArray rideList = response.getJSONObject(0).getJSONArray("data");
+            for (int i = 0; i < rideList.length(); ++i)
+            {
+                //THIS HOW YOU ACCESS THE OBJECT INFORMATION
+                JSONObject ride = rideList.getJSONObject(i);
+                pickup = ride.getString("pickup");
+                distance = ride.getString("distance");
+                destination = ride.getString("destination");
+                duration = ride.getString("duration");
+                uid = ride.getString("UID");
+                cost = ride.getString("cost");
+
+                ride_string = mpickup+ pickup + newline + mdestin + destination + newline + mdist + distance + newline + mcost + cost + newline + mdur + duration + newline + mdriverID + uid;
+
+                rides_list.add(i,ride_string);
+
+                /*rides_list.add(i,pickup);
+                rides_list.add(i,destination);
+                rides_list.add(i,distance);*/
+
+            }
+        }catch (Exception e) {System.out.println(e);}
 
     }
 

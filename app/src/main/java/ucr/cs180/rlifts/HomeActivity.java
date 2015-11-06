@@ -46,7 +46,7 @@ public class HomeActivity extends AppCompatActivity
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
 
         boolean flag = gdr.makeConnection(start, dest, uid);
-        if (flag) {
+        if (flag = true) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
         }
@@ -79,6 +79,7 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -132,8 +133,8 @@ public class HomeActivity extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.nav_profile) {
-            System.out.println("handling the profile view!");
-            fragment = ProfileFragment.newInstance("string 1", "string2", profileData);
+            System.out.println("handling the driver view!");
+            fragment = ProfileFragment.newInstance("string1", "string2");
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -161,7 +162,13 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        } else if(id == R.id.logout){
+            Intent intent = new Intent(this, LoginActivity.class);
+            Toast.makeText(getApplicationContext(),
+                    "Logout Successful", Toast.LENGTH_LONG).show();
+            startActivity(intent);
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -192,10 +199,10 @@ public class HomeActivity extends AppCompatActivity
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
                 JSONObject data = new JSONObject();
-
                 data.put("Rides", "Rides");
                 data.put("queryType", "allRides");
                 data.put("data", uid);
+
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
@@ -278,7 +285,5 @@ public class HomeActivity extends AppCompatActivity
     }
 
 }
-
-
 
 
