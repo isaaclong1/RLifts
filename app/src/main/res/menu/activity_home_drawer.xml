@@ -11,6 +11,7 @@
             android:title="Driver" />
         <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
             android:title="Tools" />
+        <item android:id="@+id/logout" android:title="Logout" />
     </group>
 
     <item android:title="Communicate">

@@ -79,7 +79,7 @@ public class RiderFragment extends Fragment {
     public static void parse_json_for_displaying(JSONArray response) {
         try {
             String line = response.getJSONObject(0).toString();
-            
+
             //for(int i = response.length(); i > 0; i++)
             //String temp = response.getJSONObject(0).getString("ride1");
 

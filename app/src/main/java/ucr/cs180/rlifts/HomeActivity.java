@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
 
         boolean flag = gdr.makeConnection(start, dest, uid);
-        if (flag) {
+        if (flag = true) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
         }
@@ -156,7 +156,13 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        } else if(id == R.id.logout){
+            Intent intent = new Intent(this, LoginActivity.class);
+            Toast.makeText(getApplicationContext(),
+                    "Logout Successful", Toast.LENGTH_LONG).show();
+            startActivity(intent);
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
