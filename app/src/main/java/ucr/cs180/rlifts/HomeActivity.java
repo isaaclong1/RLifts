@@ -94,7 +94,7 @@ public class HomeActivity extends AppCompatActivity
                 new Get_Driver_Message().execute();
                 if(flag) {
                     Toast.makeText(getApplicationContext(),
-                            "Profile created!", Toast.LENGTH_LONG).show();
+                            "Message incoming!", Toast.LENGTH_LONG).show();
                 }
                 ha.postDelayed(this, 10000);
             }
