@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -44,7 +45,10 @@ public class RiderFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    public static String sendby_id;
     private OnFragmentInteractionListener mListener;
+    public static int driver_id;
+    public static String requester; // jai said this
 
     /**
      * Use this factory method to create a new instance of
@@ -76,13 +80,18 @@ public class RiderFragment extends Fragment {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // When clicked perform some action...
-
+                String choice = ((TextView) view).getText().toString();
+                int place = choice.indexOf("Driver's ID");
+                int temp = Integer.parseInt(choice.substring(place + 15, choice.length()));
+                driver_id = temp;
+                new send_message().execute();
             }
         });
         return mainView;
     }
+
     // TODO: Rename and change types and number of parameters
-    public static RiderFragment newInstance(String param1, String param2, JSONArray response) {
+    public static RiderFragment newInstance(String param1, String param2, JSONArray response, String uid) {
         RiderFragment fragment = new RiderFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -90,6 +99,7 @@ public class RiderFragment extends Fragment {
         fragment.setArguments(args);
         //received_json = response;
         parse_json_for_displaying(response);
+        requester = uid;
         return fragment;
     }
 
@@ -125,13 +135,12 @@ public class RiderFragment extends Fragment {
                 uid = ride.getString("UID");
                 cost = ride.getString("cost");
 
+                sendby_id = uid;
+                System.out.println("UID here: " + uid);
+
                 ride_string = mpickup+ pickup + newline + mdestin + destination + newline + mdist + distance + newline + mcost + cost + newline + mdur + duration + newline + mdriverID + uid;
 
                 rides_list.add(i,ride_string);
-
-                /*rides_list.add(i,pickup);
-                rides_list.add(i,destination);
-                rides_list.add(i,distance);*/
 
             }
         }catch (Exception e) {System.out.println(e);}
@@ -190,4 +199,49 @@ public class RiderFragment extends Fragment {
         public void onFragmentInteractionR(Uri uri);
     }
 
+    private class send_message extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Messages", "Messages");
+                data.put("sentBy", requester);
+                data.put("sentTo", driver_id);
+                data.put("mtext", "My message");
+                data.put("status", 0);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-add.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                        }
+                    }
+
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
 }
