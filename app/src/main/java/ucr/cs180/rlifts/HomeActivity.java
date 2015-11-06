@@ -134,7 +134,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             System.out.println("handling the driver view!");
-            fragment = ProfileFragment.newInstance("string1", "string2");
+            fragment = ProfileFragment.newInstance("string1", "string2", profileData);
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
