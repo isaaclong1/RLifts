@@ -37,6 +37,7 @@ public class HomeActivity extends AppCompatActivity
     private String uid;
     private JSONArray send_over;
     private JSONArray profileData;
+    private JSONArray picture;
 
     public void post_ride_click(View view) throws IOException {
         StartView = (EditText) findViewById(R.id.start);
@@ -133,8 +134,9 @@ public class HomeActivity extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.nav_profile) {
-            System.out.println("handling the driver view!");
-            fragment = ProfileFragment.newInstance("string1", "string2", profileData);
+            System.out.println("handling the profile view!");
+            // TODO: get the photo from local file and pass it through as encoded string
+            fragment = ProfileFragment.newInstance("string1", "string2", profileData, picture);
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -244,12 +246,13 @@ public class HomeActivity extends AppCompatActivity
             try {
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
+
+                // request for profile data
                 JSONObject data = new JSONObject();
 
                 data.put("Users", "Users");
                 data.put("queryType", "profileData");
                 data.put("data", uid);
-
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
@@ -266,6 +269,20 @@ public class HomeActivity extends AppCompatActivity
                         }
                     }
                 }
+
+                // request for photo
+                networkRequest.response = new JSONArray();
+                String email = response.getJSONObject(0).getString("email");
+                data = new JSONObject();
+                data.put("Users", "Users");
+                data.put("queryType", "null");
+                data.put("photo", email);
+                cred = new JSONArray();
+                cred.put(data);
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred);
+                System.out.println("Testing picture request");
+                System.out.println(networkRequest.response);
+                picture = networkRequest.response;
 
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
