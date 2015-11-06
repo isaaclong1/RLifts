@@ -3,26 +3,26 @@ package ucr.cs180.rlifts;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-
-import android.os.AsyncTask;
-
-import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,13 +33,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import android.content.Intent;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import com.google.android.gms.plus.Plus;
 
 /**
  * A login screen that offers login via email/password.
@@ -170,7 +165,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_register_new_user);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         TextView fnameview = (TextView) findViewById(R.id.firstname);
         TextView lnameview = (TextView) findViewById(R.id.lastname);
@@ -262,53 +259,57 @@ public class RegisterActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        /*
 
-        if(!TextUtils.isEmpty(password) && !isPasswordValid(password))
-        {
-            mPasswordView.setError("This password is too short");
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        if(!TextUtils.isEmpty(fname))
+        if(TextUtils.isEmpty(fname))
         {
             mFnameView.setError("This field is required");
             focusView = mFnameView;
             cancel = true;
         }
-        if(!TextUtils.isEmpty(lname))
+        if(TextUtils.isEmpty(lname))
         {
             mLnameView.setError("This field is required");
             focusView = mLnameView;
             cancel = true;
         }
-        if(!TextUtils.isEmpty(username))
+        if(TextUtils.isEmpty(username))
         {
             mUsernameView.setError("This field is required");
             focusView = mUsernameView;
             cancel = true;
         }
-        if(!TextUtils.isEmpty(birthday) && !isBirthdayValid(birthday))
+        if(TextUtils.isEmpty(birthday) || !isBirthdayValid(birthday))
         {
             mBirthdayView.setError("This birthday is incorrect");
             focusView = mBirthdayView;
             cancel = true;
         }
-        if(!TextUtils.isEmpty(phone) && !isPhoneValid(phone))
+        if(TextUtils.isEmpty(phone) || !isPhoneValid(phone))
         {
-            mPhoneNumView.setError("This field is required");
+            mPhoneNumView.setError("Enter a valid phone number");
             focusView = mPhoneNumView;
+            cancel = true;
+        }
+        if(TextUtils.isEmpty(password) || !isPasswordValid(password))
+        {
+            mPasswordView.setError("This password is too short");
+            focusView = mPasswordView;
+            cancel = true;
+        }
+        if(!password.equals(confirm_pw))
+        {
+            mPasswordView.setError("Passwords do not match");
+            focusView = mPasswordView;
             cancel = true;
         }
         if(cancel)
         {
             focusView.requestFocus();
-
         }
-        else { */
-        mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username, email, RegisterActivity.this);
-        mAuthTask.execute((Void) null);
+        else {
+            mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username, email, RegisterActivity.this);
+            mAuthTask.execute((Void) null);
+        }
     }
 
     private boolean isPasswordValid(String password){
@@ -327,7 +328,7 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
     private boolean isPhoneValid(String phone){
-        return phone.length() > 4;
+        return phone.length() >= 10;
     }
     public class registerUser extends AsyncTask<Void, Void, Boolean> {
 
@@ -398,7 +399,7 @@ public class RegisterActivity extends AppCompatActivity {
                 System.out.println("Debug in RegisterNewUser in background: \n" + e.getMessage());
                 return false;
             }
-            return true;
+            return false;
         }
 
         @Override

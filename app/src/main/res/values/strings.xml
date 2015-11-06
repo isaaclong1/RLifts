@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">RLifts</string>
-    
+
     <!-- Strings related to login -->
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
-
+    <string name="Choice1"></string>
+    <string name="Select">Select</string>
+    <string name="Post_ride">Post ride</string>
+    <string name="Driver_destination">Destination</string>
+    <string name="Driver_start">Start</string>
     <string name="sign_out">Sign out</string>
     <string name="signing_in">Signing in</string>
     <string name="disconnect">Disconnect</string>
@@ -19,8 +23,8 @@
     <string name="First_name">First Name</string>
     <string name="Last_name">Last Name</string>
     <string name="Username">Username</string>
-    <string name="Birthday">Birthday</string>
-    <string name="Phone_num">Phone Number</string>
+    <string name="Birthday">Birthday(MM/DD/YYYY)</string>
+    <string name="Phone_num">Phone Number(1234567890)</string>
     <string name="Submit">Submit</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Log in</string>
@@ -30,6 +34,7 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="register">Register</string>
+    <string name="facebook_app_id">960098060714352</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -43,8 +48,4 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="title_activity_profile">ProfileActivity</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

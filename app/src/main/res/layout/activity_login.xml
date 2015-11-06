@@ -87,53 +87,40 @@
                 android:onClick="registerclick"/>
 
 
-            <LinearLayout
+
+
+
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/imageButton"
+                android:scaleType="fitCenter"
+                android:src="@drawable/google_plus"
+                android:background="#263238"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:onClick="GoogleClick" />
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/facebook_login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:layout_margin="30dp"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"/>
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/imageButton"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/google_plus"
-                    android:background="#263238"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignLeft="@+id/button"
-                    android:layout_alignStart="@+id/button"
-                    android:onClick="GoogleClick" />
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/imageButton4"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/facebook"
-                    android:background="#263238"
-                    android:layout_alignTop="@+id/imageButton"
-                    android:layout_toRightOf="@+id/imageButton"
-                    android:layout_toEndOf="@+id/imageButton"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp"
-                    android:onClick="FacebookClick "/>
-            </LinearLayout>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/info"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:textSize="18sp"/>
 
         </LinearLayout>
     </ScrollView>
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="301dp"
-        android:layout_marginStart="301dp" />
 
 
 </RelativeLayout>

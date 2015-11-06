@@ -1,9 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="ucr.cs180.rlifts.DriverFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="This is the driver view!" />
+    <AutoCompleteTextView android:id="@+id/start" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="@string/Driver_start" android:maxLines="1"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textIsSelectable="false"
+        android:textColorHint="#000000" />
 
-</FrameLayout>
+    <AutoCompleteTextView android:id="@+id/destination" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="@string/Driver_destination" android:maxLines="1"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textIsSelectable="false"
+        android:textColorHint="#000000"
+        android:layout_below="@+id/start"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/Post_ride_button" style="?android:textAppearanceSmall"
+        android:layout_width="267dp" android:layout_height="wrap_content"
+        android:text="@string/Post_ride"
+        android:layout_gravity="center_horizontal"
+        android:textSize="@dimen/loginsize"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:background="#00bbb3"
+        android:layout_marginTop="62dp"
+        android:layout_below="@+id/destination"
+        android:layout_centerHorizontal="true"
+        android:onClick="post_ride_click"/>
+
+</RelativeLayout>
