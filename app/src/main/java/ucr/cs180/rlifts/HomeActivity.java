@@ -34,6 +34,7 @@ public class HomeActivity extends AppCompatActivity
     private EditText StartView;
     private EditText DestinationView;
     private String uid;
+    private JSONArray send_over;
 
     public void post_ride_click(View view) throws IOException {
         StartView = (EditText) findViewById(R.id.start);
@@ -135,10 +136,12 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
-            fragment = RiderFragment.newInstance("string1", "string2");
+            fragment = RiderFragment.newInstance("string1", "string2", send_over);
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            new Get_Rides().execute();
+
 
         } else if (id == R.id.nav_driver) {
             System.out.println("handling the driver view!");
@@ -187,16 +190,18 @@ public class HomeActivity extends AppCompatActivity
                 data.put("queryType", "allRides");
                 data.put("data", uid);
 
+
                 JSONArray cred = new JSONArray();
                 cred.put(data);
 
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
-
+                send_over = response;
+                System.out.println(response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for login existing user.");
+                            System.out.println("Successfully received confirmation from server for getting rides.");
                             //return true;
                         }
                     }
