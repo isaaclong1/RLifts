@@ -63,7 +63,7 @@ public class ProfileFragment extends Fragment {
         args.putString(ARG_PARAM2, param2);
         Vector<String> data = new Vector<>();
         try {
-           data = parseResponse(response);
+            data = parseResponse(response);
         } catch (Exception e) {
             System.out.println("Exception in parse profile response call" + e.getMessage());
         }
@@ -165,12 +165,12 @@ public class ProfileFragment extends Fragment {
         TextView bdayText = (TextView)base.findViewById(R.id.birthday);
         TextView phoneText = (TextView)base.findViewById(R.id.phone_num);
         TextView ageText = (TextView)base.findViewById(R.id.age);
-        unameText.setText(uname);
-        emailText.setText(email);
-        nickText.setText(nick);
-        bdayText.setText(bday);
-        phoneText.setText(phone);
-        ageText.setText(age);
+        unameText.setText("Username: " + uname);
+        emailText.setText("Email: " + email);
+        nickText.setText("Nickname: " + nick);
+        bdayText.setText("Birthday : " + bday);
+        phoneText.setText("Phone Number: " + phone);
+        ageText.setText("Age: " + age);
 
         return base;
     }
@@ -215,5 +215,4 @@ public class ProfileFragment extends Fragment {
     }
 
 }
-
 

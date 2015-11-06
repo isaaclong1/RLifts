@@ -1,11 +1,13 @@
 package ucr.cs180.rlifts;
 
 import android.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -18,23 +20,31 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener, RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener {
 
     private EditText StartView;
     private EditText DestinationView;
-    private String uid;
+    private static String uid;
     private JSONArray send_over;
+    private static boolean flag = false;
+    private static boolean run_showalert = true;
+    private static int m_id;
+    private static String global_status;
+    private JSONArray profileData;
+
+    Handler mHandler;
 
     public void post_ride_click(View view) throws IOException {
         StartView = (EditText) findViewById(R.id.start);
@@ -44,11 +54,10 @@ public class HomeActivity extends AppCompatActivity
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
 
         boolean flag = gdr.makeConnection(start, dest, uid);
-        if (flag = true) {
+        if (flag) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
@@ -57,6 +66,8 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Home");
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -81,10 +92,23 @@ public class HomeActivity extends AppCompatActivity
         if (extras != null) {
             String value = extras.getString("global_uid");
             uid = value;
+            System.out.println("LALA " + uid);
         }
 
         new Get_Rides().execute();
+        final Handler ha = new Handler();
+        ha.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                new Get_Driver_Message().execute();
 
+                showAlert();
+
+                ha.postDelayed(this, 5000);
+            }
+        }, 5000);
+
+        new getProfileInformation().execute();
     }
 
     @Override
@@ -102,6 +126,32 @@ public class HomeActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
+    }
+
+    public void showAlert ()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("YOUR ROUTE HAS BEEN SELECTED, DO YOU WANT TO TAKE THIS RIDE?").create();
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which) // yes buton
+            {
+                //run_showalert = false;
+                //new set_alert().execute();
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which) // no button
+            {
+                //run_showalert = false;
+                //new set_alert().execute();
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle ("NOTIFICATION");
+        builder.show();
     }
 
     @Override
@@ -129,18 +179,22 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             System.out.println("handling the driver view!");
-            fragment = ProfileFragment.newInstance("string1", "string2");
+            fragment = ProfileFragment.newInstance("string1", "string2", profileData);
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            getSupportActionBar().setTitle("Profile");
 
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
-            fragment = RiderFragment.newInstance("string1", "string2", send_over);
+            //fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
+            fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
             // Insert the fragment by replacing any existing fragment
+            new Get_Rides().execute();
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             new Get_Rides().execute();
+            getSupportActionBar().setTitle("Rider");
 
 
         } else if (id == R.id.nav_driver) {
@@ -149,6 +203,7 @@ public class HomeActivity extends AppCompatActivity
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            getSupportActionBar().setTitle("Driver");
 
         } else if (id == R.id.nav_manage) {
 
@@ -182,6 +237,111 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onFragmentInteractionD(Uri uri) {
 
+    }
+
+    private class Get_Driver_Message extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            flag = false;
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Messages", "Messages");
+                data.put("queryType", "inboxCheck");
+                data.put("data", uid);
+
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                System.out.println("HI" + response);
+                //parsing response
+                String message_id = "";
+                String status="";
+                JSONArray rideList = response.getJSONObject(0).getJSONArray("messages");
+                for(int i = 0; i < rideList.length(); i++){
+                    JSONObject ride = rideList.getJSONObject(i);
+                    message_id = ride.getString("MID");
+                    status = ride.getString("status");
+                    m_id = Integer.parseInt(message_id);
+                    global_status = status;
+                }
+
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                            System.out.println("OVER HERE");
+                            flag = true;
+                        }
+                    }
+                }
+                System.out.println("MESSAGES : " + response);
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+    }
+    private class getProfileInformation extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+
+                data.put("Users", "Users");
+                data.put("queryType", "profileData");
+                data.put("data", uid);
+
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                profileData = response;
+                System.out.println(response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting profile data.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
     }
 
     private class Get_Rides extends AsyncTask<String, Void, Void> {
@@ -229,6 +389,93 @@ public class HomeActivity extends AppCompatActivity
         protected void onProgressUpdate(Void... values) {
         }
     }
+    private class set_alert extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            flag = false;
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Messages", "Messages");
+                data.put("queryType", "setMessageStatus");
+                data.put("MID", m_id); // need message id
+
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                System.out.println(response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+    }
+    private class set_message_status extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            //flag = false;
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Messages", "Messages");
+                data.put("queryType", "setMessageStatus");
+                data.put("MID", m_id); // need message id
+
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                System.out.println(response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+    }
 }
+
 
 
