@@ -67,7 +67,6 @@ public class ProfileFragment extends Fragment {
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         Vector<String> data = new Vector<>();
-
         try {
            data = parseResponse(response);
             args.putString("ARG_PIC", parsePicture(picture));
@@ -85,7 +84,6 @@ public class ProfileFragment extends Fragment {
         args.putString("ARG_BIRTHDAY", data.get(3));
         args.putString("ARG_PHONE", data.get(4));
         args.putString("ARG_AGE", data.get(5));
-        // TODO: set an arg for photo string
 
         // somehow get response into args, and in on create do the display
         fragment.setArguments(args);
@@ -142,6 +140,30 @@ public class ProfileFragment extends Fragment {
 
             //mProfileData = getArguments().get
         }
+
+        //TextView uname = (TextView) getView().findViewById(R.id.uname);
+        //uname.setText("BLAH BLAH BLAH"); // should be done using android resources, ideally
+
+        // trying doing the network call here for profile information and display it
+        /*
+        NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+        JSONObject data = new JSONObject();
+        try {
+            data.put("Users", "Users");
+            data.put("queryType", "profileData");
+            data.put("data", mParam1);
+
+        } catch (Exception e) {
+            System.out.println("Error in profile network request!" + e.getMessage());
+        }
+
+        JSONArray cred = new JSONArray();
+        cred.put(data);
+
+        networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+        JSONArray response = networkRequest.getResponse();
+        System.out.print(response);
+        */
     }
 
     @Override
@@ -169,6 +191,12 @@ public class ProfileFragment extends Fragment {
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         ImageView image = (ImageView)base.findViewById(R.id.profile_picture);
         image.setImageBitmap(decodedByte);
+        unameText.setText("Username: " + uname);
+        emailText.setText("Email: " + email);
+        nickText.setText("Nickname: " + nick);
+        bdayText.setText("Birthday : " + bday);
+        phoneText.setText("Phone Number: " + phone);
+        ageText.setText("Age: " + age);
 
         return base;
     }

@@ -142,11 +142,11 @@ public class RegisterActivity extends AppCompatActivity {
         options.inJustDecodeBounds = false;
         bm = BitmapFactory.decodeFile(selectedImagePath, options);
 
-        //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        //bm.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-        //byte[] b = bytes.toByteArray();
-        //String encodedimage = Base64.encodeToString(b, Base64.DEFAULT);
-        //encoded_photo = encodedimage;
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        byte[] b = bytes.toByteArray();
+        String encodedimage = Base64.encodeToString(b, Base64.DEFAULT);
+        encoded_photo = encodedimage;
 
         ivImage = (ImageView) findViewById(R.id.imageButton);
         ivImage.setImageBitmap(bm);

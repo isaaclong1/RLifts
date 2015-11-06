@@ -58,13 +58,7 @@ public class GoogleDistanceRequest{
         Start = start;
         Dest = destination;
         new LongOperation().execute();
-        if(status){
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return true;
 
     }
 

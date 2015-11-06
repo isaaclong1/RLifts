@@ -164,12 +164,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             @Override
             public void onCancel() {
-                info.setText("Login attempt canceled.");
+                //info.setText("Login attempt canceled.");
             }
 
             @Override
             public void onError(FacebookException e) {
-                info.setText("Login attempt failed.");
+                //info.setText("Login attempt failed.");
             }
         });
         //facebook functions end
