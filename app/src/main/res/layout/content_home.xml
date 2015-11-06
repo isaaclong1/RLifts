@@ -16,16 +16,13 @@
 
     </FrameLayout>
 
-    <!-- apparently you cannot replace a fragment that is static in xml have to insert the fragment programmatically
-    <FrameLayout android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:id="@+id/content_home">
+
+
         <TextView android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:text="Welcome to RLifts! Open the navigation drawer to get started.">
 
         </TextView>
-    </FrameLayout>
-    -->
+
 
 </RelativeLayout>
