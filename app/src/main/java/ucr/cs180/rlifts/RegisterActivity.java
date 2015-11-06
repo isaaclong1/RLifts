@@ -297,12 +297,12 @@ public class RegisterActivity extends AppCompatActivity {
             focusView = mPasswordView;
             cancel = true;
         }
-        if(!password.equals(confirm_pw))
-        {
-            mPasswordView.setError("Passwords do not match");
-            focusView = mPasswordView;
-            cancel = true;
-        }
+        //if(!password.equals(confirm_pw))
+        //{
+         //   mPasswordView.setError("Passwords do not match");
+        //    focusView = mPasswordView;
+        //    cancel = true;
+        //}
         if(cancel)
         {
             focusView.requestFocus();

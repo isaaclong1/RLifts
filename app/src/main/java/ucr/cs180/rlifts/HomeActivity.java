@@ -40,7 +40,7 @@ public class HomeActivity extends AppCompatActivity
     private JSONArray send_over;
     private static boolean flag = false;
     private static boolean run_showalert = true;
-    private static int m_id;
+    private static String m_id;
     private static String global_status;
     private JSONArray profileData;
 
@@ -101,8 +101,11 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void run() {
                 new Get_Driver_Message().execute();
+                if(flag) {
 
-                showAlert();
+                    showAlert();
+                    flag = false;
+                }
 
                 ha.postDelayed(this, 5000);
             }
@@ -263,23 +266,38 @@ public class HomeActivity extends AppCompatActivity
                 String status="";
                 JSONArray rideList = response.getJSONObject(0).getJSONArray("messages");
                 for(int i = 0; i < rideList.length(); i++){
+                    System.out.println("THIS IS STARTING");
                     JSONObject ride = rideList.getJSONObject(i);
                     message_id = ride.getString("MID");
                     status = ride.getString("status");
-                    m_id = Integer.parseInt(message_id);
+                    m_id = message_id;
                     global_status = status;
+                    System.out.println("THIS IS ENDING");
                 }
 
-                if (response != null) {
-                    for (int i = 0; i < response.length(); i++) {
-                        if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for getting rides.");
-                            //return true;
-                            System.out.println("OVER HERE");
-                            flag = true;
-                        }
+                JSONObject otherData = new JSONObject();
+                otherData.put("Messages", "Messages");
+                otherData.put("queryType", "setMessageStatus");
+                otherData.put("MID", m_id);
+
+                JSONArray otherCred = new JSONArray();
+                otherCred.put(otherData);
+
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", otherCred);
+                JSONArray otherResponse = networkRequest.getResponse();
+
+
+                for (int i = 0; i < response.length(); i++) {
+                    if (response.getJSONObject(i).get("status").equals("ok")) {
+                        System.out.println("Successfully received confirmation from server for getting rides.");
+                        //return true;
+                        System.out.println("OVER HERE");
+
+                        flag = true;
                     }
                 }
+
                 System.out.println("MESSAGES : " + response);
 
             } catch (Exception e) { // for now all exceptions will return false
