@@ -52,12 +52,14 @@ public class NetworkRequest {
                 System.out.println(payload);
                 urlConn.setDoOutput(true);
                 urlConn.setChunkedStreamingMode(0);
+                if(urlConn.getOutputStream() == null) System.out.println("We got problems!");
                 OutputStream out = new BufferedOutputStream(urlConn.getOutputStream());
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
                 writer.write(payload.toString());
 
                 writer.close();
                 out.close();
+                System.out.println("Successfully sent POST");
             }
 
             // Handle response from server
@@ -83,6 +85,7 @@ public class NetworkRequest {
 
         } catch(Exception e) {
             System.out.println("Debug in get request:\n" + e.getMessage());
+            e.printStackTrace();
             return -1;
         }
 

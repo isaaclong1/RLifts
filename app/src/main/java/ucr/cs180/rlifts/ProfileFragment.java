@@ -7,6 +7,16 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -23,9 +33,17 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private JSONArray mProfileData;
+    private String uname;
+    private String email;
+    private String nick;
+    private String bday;
+    private String phone;
+    private String age;
 
     private OnFragmentInteractionListener mListener;
 
@@ -33,18 +51,62 @@ public class ProfileFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param param2 Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance(String param1, String param2, JSONArray response) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        Vector<String> data = new Vector<>();
+        try {
+           data = parseResponse(response);
+        } catch (Exception e) {
+            System.out.println("Exception in parse profile response call" + e.getMessage());
+        }
+
+        for(int i = 0; i < data.size(); i++) {
+            System.out.println(data.get(i));
+        }
+
+        args.putString("ARG_UNAME", data.get(0));
+        args.putString("ARG_EMAIL", data.get(1));
+        args.putString("ARG_NICK", data.get(2));
+        args.putString("ARG_BIRTHDAY", data.get(3));
+        args.putString("ARG_PHONE", data.get(4));
+        args.putString("ARG_AGE", data.get(5));
+
+        // somehow get response into args, and in on create do the display
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static Vector<String> parseResponse(JSONArray response) throws JSONException {
+        System.out.println("Parsing the profile data: ");
+        System.out.println(response);
+        // parse the contents of response
+        // get the view items you need from R and set the strings accordingly
+
+        JSONObject data = response.getJSONObject(0);
+        if(!data.getString("status").equals("ok")) {
+            System.out.println("Error in profile data post request or db error");
+            return null;
+        }
+
+        Vector<String> dataStrings = new Vector<>();
+        dataStrings.add(data.getString("uname"));
+        dataStrings.add(data.getString("email"));
+        dataStrings.add(data.getString("nickname"));
+        dataStrings.add(data.getString("birthday"));
+        dataStrings.add(data.getString("phone_num"));
+        dataStrings.add(data.getString("age"));
+
+        System.out.println(dataStrings);
+        return dataStrings;
+
     }
 
     public ProfileFragment() {
@@ -57,14 +119,60 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            uname = getArguments().getString("ARG_UNAME", "");
+            email = getArguments().getString("ARG_EMAIL", "");
+            nick = getArguments().getString("ARG_NICK", "");
+            bday = getArguments().getString("ARG_BIRTHDAY", "");
+            phone = getArguments().getString("ARG_PHONE", "");
+            age = getArguments().getString("ARG_AGE", "");
+
+            //mProfileData = getArguments().get
         }
+
+        //TextView uname = (TextView) getView().findViewById(R.id.uname);
+        //uname.setText("BLAH BLAH BLAH"); // should be done using android resources, ideally
+
+        // trying doing the network call here for profile information and display it
+        /*
+        NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+        JSONObject data = new JSONObject();
+        try {
+            data.put("Users", "Users");
+            data.put("queryType", "profileData");
+            data.put("data", mParam1);
+
+        } catch (Exception e) {
+            System.out.println("Error in profile network request!" + e.getMessage());
+        }
+
+        JSONArray cred = new JSONArray();
+        cred.put(data);
+
+        networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+        JSONArray response = networkRequest.getResponse();
+        System.out.print(response);
+        */
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View base = inflater.inflate(R.layout.fragment_profile, container, false);
+        TextView unameText = (TextView)base.findViewById(R.id.uname);
+        TextView emailText = (TextView)base.findViewById(R.id.email_prof);
+        TextView nickText = (TextView)base.findViewById(R.id.nickname);
+        TextView bdayText = (TextView)base.findViewById(R.id.birthday);
+        TextView phoneText = (TextView)base.findViewById(R.id.phone_num);
+        TextView ageText = (TextView)base.findViewById(R.id.age);
+        unameText.setText(uname);
+        emailText.setText(email);
+        nickText.setText(nick);
+        bdayText.setText(bday);
+        phoneText.setText(phone);
+        ageText.setText(age);
+
+        return base;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -107,3 +215,5 @@ public class ProfileFragment extends Fragment {
     }
 
 }
+
+
