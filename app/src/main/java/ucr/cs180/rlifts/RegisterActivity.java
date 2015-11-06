@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -309,6 +310,8 @@ public class RegisterActivity extends AppCompatActivity {
         else {
             mAuthTask = new registerUser(fname, lname, birthday, phone, confirm_pw, password, username, email, RegisterActivity.this);
             mAuthTask.execute((Void) null);
+            Toast.makeText(getApplicationContext(),
+                    "Profile created!", Toast.LENGTH_LONG).show();
         }
     }
 

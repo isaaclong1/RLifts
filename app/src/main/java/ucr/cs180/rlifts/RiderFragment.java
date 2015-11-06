@@ -100,9 +100,19 @@ public class RiderFragment extends Fragment {
             String distance = "";
             String pickup = "";
             String destination = "";
-            String cost;
-            String duration;
-                //THIS HOW YOU ACCESS THE OBJECT INFORMATION
+            String cost  = "";
+            String duration = "";
+            String ride_string = "";
+            String uid = "";
+            String mpickup = "Pick Up:";
+            String mdestin = " \nDestination:";
+            String mdist = "\nDistance: ";
+            String mdur = " \nDuration: ";
+            String mcost = "\nEstimated Cost: $";
+            String mdriverID = "\nYour Driver's ID #: ";
+            String newline = "\n";
+
+            //THIS HOW YOU ACCESS THE OBJECT INFORMATION
             JSONArray rideList = response.getJSONObject(0).getJSONArray("data");
             for (int i = 0; i < rideList.length(); ++i)
             {
@@ -111,7 +121,18 @@ public class RiderFragment extends Fragment {
                 pickup = ride.getString("pickup");
                 distance = ride.getString("distance");
                 destination = ride.getString("destination");
+                duration = ride.getString("duration");
+                uid = ride.getString("UID");
+                cost = ride.getString("cost");
+
+                ride_string = mpickup+ pickup + newline + mdestin + destination + newline + mdist + distance + newline + mcost + cost + newline + mdur + duration + newline + mdriverID + uid;
+
+                rides_list.add(i,ride_string);
+
+                /*rides_list.add(i,pickup);
                 rides_list.add(i,destination);
+                rides_list.add(i,distance);*/
+
             }
         }catch (Exception e) {System.out.println(e);}
 
