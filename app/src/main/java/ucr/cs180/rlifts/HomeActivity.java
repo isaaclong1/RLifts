@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,6 +36,7 @@ public class HomeActivity extends AppCompatActivity
     private EditText DestinationView;
     private String uid;
     private JSONArray send_over;
+    private JSONArray profileData;
 
     public void post_ride_click(View view) throws IOException {
         StartView = (EditText) findViewById(R.id.start);
@@ -71,11 +73,12 @@ public class HomeActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+        // open drawer by default?
+        drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -84,6 +87,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         new Get_Rides().execute();
+        new getProfileInformation().execute();
 
     }
 
@@ -128,11 +132,12 @@ public class HomeActivity extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.nav_profile) {
-            System.out.println("handling the driver view!");
-            fragment = ProfileFragment.newInstance("string1", "string2");
+            System.out.println("handling the profile view!");
+            fragment = ProfileFragment.newInstance("string 1", "string2", profileData);
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            //new getProfileInformation().execute();
 
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
@@ -140,7 +145,7 @@ public class HomeActivity extends AppCompatActivity
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-            new Get_Rides().execute();
+            //new Get_Rides().execute();
 
 
         } else if (id == R.id.nav_driver) {
@@ -170,6 +175,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteractionP(Uri uri) {
+        System.out.println("INTERACTING WITH PROFILE FRAGMENT! WOO!");
 
     }
 
@@ -186,10 +192,10 @@ public class HomeActivity extends AppCompatActivity
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
                 JSONObject data = new JSONObject();
+
                 data.put("Rides", "Rides");
                 data.put("queryType", "allRides");
                 data.put("data", uid);
-
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
@@ -223,6 +229,56 @@ public class HomeActivity extends AppCompatActivity
         protected void onProgressUpdate(Void... values) {
         }
     }
+
+    private class getProfileInformation extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+
+                data.put("Users", "Users");
+                data.put("queryType", "profileData");
+                data.put("data", uid);
+
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                profileData = response;
+                System.out.println(response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting profile data.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
+
 }
+
+
 
 
