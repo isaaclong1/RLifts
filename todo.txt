@@ -1,0 +1,30 @@
+Bug Fix (Isaac)
+-on create user capture UID/UID register crashing issue
+-During post ride check for valid return from google api, if invalid let them know and don’t post ride/error
+
+Home Page (Albert)
+-tutorial text for side menu, have this open by default
+
+Driver Fragment (Terry & Jai)
+-check if user is registered driver, if not make them register (will have to be new activity for registering as driver)
+-create drivers table in db
+-After they have registered, display option to post ride
+-In post ride capture starting location as long an lat with google API call
+-Add field for leave time for driver
+
+Notification system (Isaac & Terry & Jai)
+-Once the driver has confirmed the rider:
+    -Give driver the address of the rider as pop up
+    -Give rider unique confirmation string as pop up
+
+Rider Fragment (Ben & Don)
+-new activity/fragment to capture starting and ending location 
+-Clean up/implement the initial filtered list fragment that only filters on a certain longitude and latitude range 
+-Add additional filter options (by destination/best fit, by leave time)
+-Add pop up for select ride confirmation
+
+Payment (Isaac)
+-Adding paypal to pay for tokens as another fragment in side menu
+-Add token count to user table
+-Upon string confirmation at end of ride, token transfer happens
+
