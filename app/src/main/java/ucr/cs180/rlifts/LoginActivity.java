@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private FacebookLoginTask mFBAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -113,7 +114,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         loginButton = (LoginButton)findViewById(R.id.facebook_login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
         //Facebook login stuff end
-        //setContentView(R.layout.activity_login);
         // Set up the login form. (Initialize views and listeners)
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -148,17 +148,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         // Application code
                         try {
-                            //info.setText("User Name: " + object.getString("first_name") + "\n" + "Email: " + object.getString("email"));
                             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                             Bundle bundle = new Bundle();
-                            //Person signedInUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-                            //if(signedInUser.hasDisplayName()){
-                            //   bundle.putString("username", userName.getText().toString());
-                            //}
+
                             bundle.putString("username", object.getString("first_name") + " " + object.getString("last_name"));
                             bundle.putString("email", object.getString("email"));
+                            bundle.putString("fbid", object.getString("id"));
                             intent.putExtras(bundle);
-                            startActivity(intent);
+                            mFBAuthTask = new FacebookLoginTask(object.getString("id"), LoginActivity.this, intent);
+                            mFBAuthTask.execute((Void) null);
                         } catch (JSONException e) {
                             //Catch error
                         }
@@ -478,6 +476,81 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onCancelled() {
             mAuthTask = null;
+            showProgress(false);
+        }
+
+        protected String get_uid(){
+            return global_uid;
+        }
+    }
+
+    public class FacebookLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private LoginActivity mActivity;
+        private final String mFacebookID;
+        private Intent mIntent;
+
+        FacebookLoginTask(String fbid, LoginActivity activity, Intent intent) {
+            mActivity = activity;
+            mFacebookID = fbid;
+            mIntent = intent;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Users", "");
+                data.put("fbid", mFacebookID);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-verify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for login existing user.");
+                            global_uid = response.getJSONObject(i).get("UID").toString();
+                            System.out.println(global_uid);
+                            return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mFBAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                // How to call an intent here?
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                Bundle my_bundle = new Bundle();
+                my_bundle.putString("global_uid", global_uid);
+                intent.putExtra("global_uid", global_uid);
+                startActivity(intent);
+                //finish();
+            } else {
+                startActivity(mIntent);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mFBAuthTask = null;
             showProgress(false);
         }
 

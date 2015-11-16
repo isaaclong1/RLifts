@@ -90,6 +90,7 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        getSupportActionBar().setTitle("Home");
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -336,7 +337,8 @@ public class HomeActivity extends AppCompatActivity
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
                 profileData = response;
-                System.out.println(response);
+                System.out.flush();
+                System.out.println("Attempting to get response here: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
