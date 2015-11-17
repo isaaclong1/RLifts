@@ -59,6 +59,8 @@ public class HomeActivity extends AppCompatActivity
         if (flag) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(),"Invalid Address!", Toast.LENGTH_LONG).show();
         }
     }
 
