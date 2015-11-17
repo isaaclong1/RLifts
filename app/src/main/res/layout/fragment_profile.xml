@@ -64,6 +64,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="300dp" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/profile_picture"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="52dp" />
 
 
 </RelativeLayout>

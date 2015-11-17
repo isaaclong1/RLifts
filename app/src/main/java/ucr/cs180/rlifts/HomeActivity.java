@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -43,6 +44,7 @@ public class HomeActivity extends AppCompatActivity
     private static String m_id;
     private static String global_status;
     private JSONArray profileData;
+    private JSONArray picture;
 
     Handler mHandler;
 
@@ -82,6 +84,7 @@ public class HomeActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+        drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -101,15 +104,15 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void run() {
                 new Get_Driver_Message().execute();
-                if(flag) {
 
+                if(flag) {
                     showAlert();
                     flag = false;
                 }
 
-                ha.postDelayed(this, 5000);
+                ha.postDelayed(this, 1000);
             }
-        }, 5000);
+        }, 1000);
 
         new getProfileInformation().execute();
     }
@@ -181,8 +184,9 @@ public class HomeActivity extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.nav_profile) {
-            System.out.println("handling the driver view!");
-            fragment = ProfileFragment.newInstance("string1", "string2", profileData);
+            System.out.println("handling the profile view!");
+            // TODO: get the photo from local file and pass it through as encoded string
+            fragment = ProfileFragment.newInstance("string1", "string2", profileData, picture);
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -266,34 +270,30 @@ public class HomeActivity extends AppCompatActivity
                 String status="";
                 JSONArray rideList = response.getJSONObject(0).getJSONArray("messages");
                 for(int i = 0; i < rideList.length(); i++){
-                    System.out.println("THIS IS STARTING");
                     JSONObject ride = rideList.getJSONObject(i);
                     message_id = ride.getString("MID");
                     status = ride.getString("status");
                     m_id = message_id;
                     global_status = status;
-                    System.out.println("THIS IS ENDING");
                 }
 
-                JSONObject otherData = new JSONObject();
-                otherData.put("Messages", "Messages");
-                otherData.put("queryType", "setMessageStatus");
-                otherData.put("MID", m_id);
-
-                JSONArray otherCred = new JSONArray();
-                otherCred.put(otherData);
+                JSONObject otherdata = new JSONObject();
+                otherdata.put("Messages", "Messages");
+                otherdata.put("queryType", "setMessageStatus");
+                otherdata.put("MID", m_id);
 
 
-                networkRequest.send("../cgi-bin/db-select.py", "POST", otherCred);
-                JSONArray otherResponse = networkRequest.getResponse();
+                JSONArray othercred = new JSONArray();
+                othercred.put(otherdata);
 
+                networkRequest.send("../cgi-bin/db-select.py", "POST", othercred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray otherresponse = networkRequest.getResponse();
 
                 for (int i = 0; i < response.length(); i++) {
                     if (response.getJSONObject(i).get("status").equals("ok")) {
                         System.out.println("Successfully received confirmation from server for getting rides.");
                         //return true;
                         System.out.println("OVER HERE");
-
                         flag = true;
                     }
                 }
@@ -322,12 +322,13 @@ public class HomeActivity extends AppCompatActivity
             try {
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
+
+                // request for profile data
                 JSONObject data = new JSONObject();
 
                 data.put("Users", "Users");
                 data.put("queryType", "profileData");
                 data.put("data", uid);
-
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
@@ -344,6 +345,20 @@ public class HomeActivity extends AppCompatActivity
                         }
                     }
                 }
+
+                // request for photo
+                networkRequest.response = new JSONArray();
+                String email = response.getJSONObject(0).getString("email");
+                data = new JSONObject();
+                data.put("Users", "Users");
+                data.put("queryType", "null");
+                data.put("photo", email);
+                cred = new JSONArray();
+                cred.put(data);
+                networkRequest.send("../cgi-bin/db-select.py", "POST", cred);
+                System.out.println("Testing picture request");
+                System.out.println(networkRequest.response);
+                picture = networkRequest.response;
 
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());

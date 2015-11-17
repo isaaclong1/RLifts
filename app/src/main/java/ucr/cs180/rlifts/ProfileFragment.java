@@ -1,12 +1,16 @@
 package ucr.cs180.rlifts;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -44,6 +48,7 @@ public class ProfileFragment extends Fragment {
     private String bday;
     private String phone;
     private String age;
+    private String encodedPhoto;
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,14 +61,15 @@ public class ProfileFragment extends Fragment {
      * @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2, JSONArray response) {
+    public static ProfileFragment newInstance(String param1, String param2, JSONArray response, JSONArray picture) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         Vector<String> data = new Vector<>();
         try {
-            data = parseResponse(response);
+           data = parseResponse(response);
+            args.putString("ARG_PIC", parsePicture(picture));
         } catch (Exception e) {
             System.out.println("Exception in parse profile response call" + e.getMessage());
         }
@@ -109,6 +115,10 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    public static String parsePicture(JSONArray picture) throws JSONException {
+        return picture.getJSONObject(0).getString("photo");
+    }
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -125,6 +135,8 @@ public class ProfileFragment extends Fragment {
             bday = getArguments().getString("ARG_BIRTHDAY", "");
             phone = getArguments().getString("ARG_PHONE", "");
             age = getArguments().getString("ARG_AGE", "");
+            // TODO: set the global photo argument here
+            encodedPhoto = getArguments().getString("ARG_PIC", "");
 
             //mProfileData = getArguments().get
         }
@@ -165,6 +177,20 @@ public class ProfileFragment extends Fragment {
         TextView bdayText = (TextView)base.findViewById(R.id.birthday);
         TextView phoneText = (TextView)base.findViewById(R.id.phone_num);
         TextView ageText = (TextView)base.findViewById(R.id.age);
+        unameText.setText(uname);
+        emailText.setText(email);
+        nickText.setText(nick);
+        bdayText.setText(bday);
+        phoneText.setText(phone);
+        ageText.setText(age);
+
+        // TODO: decode the image and display it here
+        // follow the stack overflow: byte[] gets decode, and bitmap gets string, then bitmap goes
+        // to imageView
+        byte[] decodedString = Base64.decode(encodedPhoto, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        ImageView image = (ImageView)base.findViewById(R.id.profile_picture);
+        image.setImageBitmap(decodedByte);
         unameText.setText("Username: " + uname);
         emailText.setText("Email: " + email);
         nickText.setText("Nickname: " + nick);
@@ -215,4 +241,5 @@ public class ProfileFragment extends Fragment {
     }
 
 }
+
 

@@ -148,8 +148,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         // Application code
                         try {
-                            info.setText("User Name: " + object.getString("first_name") + "\n" + "Email: " + object.getString("email"));
-
+                            //info.setText("User Name: " + object.getString("first_name") + "\n" + "Email: " + object.getString("email"));
+                            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                            Bundle bundle = new Bundle();
+                            //Person signedInUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                            //if(signedInUser.hasDisplayName()){
+                            //   bundle.putString("username", userName.getText().toString());
+                            //}
+                            bundle.putString("username", object.getString("first_name") + " " + object.getString("last_name"));
+                            bundle.putString("email", object.getString("email"));
+                            intent.putExtras(bundle);
+                            startActivity(intent);
                         } catch (JSONException e) {
                             //Catch error
                         }
