@@ -10,4 +10,97 @@
     tools:showIn="@layout/activity_driver_registration"
     tools:context="ucr.cs180.rlifts.DriverRegistration">
 
+    <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:measureAllChildren="false">
+
+        <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+
+            <!--Car Brand -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/car_brand" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/Car_brand"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!--Car Model -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/car_model" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/Car_model"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!--Car year -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/car_year" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/Car_year"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!--Car color -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/car_color" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/Car_color"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!--Drivers license -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/drivers_license" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/drivers_license"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!--Car Brand -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/license_plate" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/license_plate"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Register button -->
+            <Button android:id="@+id/register_button" style="?android:textAppearanceSmall"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" android:text="@string/register"
+                android:textStyle="bold"
+                android:background="#00bbb3"
+                android:textSize="20dp"
+                android:textColor="#ffffff"
+                android:nestedScrollingEnabled="false"
+                android:onClick="onclick" />
+
+        </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>

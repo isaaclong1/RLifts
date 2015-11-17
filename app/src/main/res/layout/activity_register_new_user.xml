@@ -159,10 +159,6 @@
                 android:nestedScrollingEnabled="false"
                 android:onClick="onclick" />
 
-
-
-
-
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

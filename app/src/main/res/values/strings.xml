@@ -4,6 +4,13 @@
     <!-- Strings related to login -->
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
+    <string name="leave_time">Departure Time</string>
+    <string name="Car_brand">Car Brand</string>
+    <string name="Car_model">Car Model</string>
+    <string name="Car_year">Car Year</string>
+    <string name="Car_color">Car Color</string>
+    <string name="drivers_license">Drivers License #</string>
+    <string name="license_plate">Car License Plate</string>
     <string name="Choice1"></string>
     <string name="Select">Select</string>
     <string name="Post_ride">Post ride</string>
@@ -48,4 +55,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_driver_registration">DriverRegistration</string>
 </resources>

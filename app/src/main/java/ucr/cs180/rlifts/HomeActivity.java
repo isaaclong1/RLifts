@@ -45,6 +45,7 @@ public class HomeActivity extends AppCompatActivity
     private static String global_status;
     private JSONArray profileData;
     private JSONArray picture;
+    private static int driver_flag;
 
     Handler mHandler;
 
@@ -59,6 +60,13 @@ public class HomeActivity extends AppCompatActivity
         if (flag) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
+        }
+
+        new valid_driver().execute();
+        if(driver_flag == 0)
+        {
+            Intent intent = new Intent(this, DriverRegistration.class);
+            startActivity(intent);
         }
     }
 
@@ -214,10 +222,6 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         } else if(id == R.id.logout){
             Intent intent = new Intent(this, LoginActivity.class);
             Toast.makeText(getApplicationContext(),
@@ -264,7 +268,6 @@ public class HomeActivity extends AppCompatActivity
 
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
-                System.out.println("HI" + response);
                 //parsing response
                 String message_id = "";
                 String status="";
@@ -492,6 +495,51 @@ public class HomeActivity extends AppCompatActivity
                         }
                     }
                 }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+    }
+
+    private class valid_driver extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Driver_Check","");
+                data.put("UID", uid);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/jverify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                System.out.println(response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                        }
+                    }
+                }
+
+                int driver_status = response.getJSONObject(0).getInt("driverStatus");
+                driver_flag = driver_status;
+
 
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
