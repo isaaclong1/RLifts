@@ -265,7 +265,7 @@ public class HomeActivity extends AppCompatActivity
 
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
-                System.out.println("HI" + response);
+                //System.out.println("HI" + response);
                 //parsing response
                 String message_id = "";
                 String status="";
@@ -299,7 +299,7 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
 
-                System.out.println("MESSAGES : " + response);
+                //System.out.println("MESSAGES : " + response);
 
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
