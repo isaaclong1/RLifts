@@ -88,6 +88,17 @@
                     android:textColor="#FFFFFF" />
 
             </android.support.design.widget.TextInputLayout>
+            <!--state -->
+            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView android:id="@+id/state" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="@string/state"
+                    android:inputType="textEmailAddress" android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#FFFFFF" />
+
+            </android.support.design.widget.TextInputLayout>
 
             <!-- Register button -->
             <Button android:id="@+id/register_button" style="?android:textAppearanceSmall"

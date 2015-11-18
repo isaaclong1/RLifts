@@ -19,6 +19,8 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Driver;
+
 public class DriverRegistration extends AppCompatActivity {
 
     private EditText mcarbrandview;
@@ -27,17 +29,17 @@ public class DriverRegistration extends AppCompatActivity {
     private EditText mcarcolorview;
     private EditText mlicenseplateview;
     private EditText mdriverslicenseview;
+    private EditText mstateview;
 
     private registerDriver mAuthTask = null;
 
+    private DriverRegistration mActivity;
+
+    private static String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_registration);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
 
         showAlert();
 
@@ -47,6 +49,7 @@ public class DriverRegistration extends AppCompatActivity {
         TextView carcolorview = (TextView) findViewById(R.id.car_color);
         TextView licenseplateview = (TextView) findViewById(R.id.license_plate);
         TextView driverslicenseview = (TextView) findViewById(R.id.drivers_license);
+        TextView stateview = (TextView) findViewById(R.id.state);
 
         mcarbrandview = ((EditText) findViewById(R.id.car_brand));
         mcarmodelview = ((EditText) findViewById(R.id.car_model));
@@ -54,7 +57,13 @@ public class DriverRegistration extends AppCompatActivity {
         mcarcolorview = ((EditText) findViewById(R.id.car_color));
         mlicenseplateview = ((EditText) findViewById(R.id.license_plate));
         mdriverslicenseview = ((EditText) findViewById(R.id.drivers_license));
+        mstateview = ((EditText) findViewById(R.id.state));
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("UID");
+            uid = value;
+        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -86,6 +95,7 @@ public class DriverRegistration extends AppCompatActivity {
         mcaryearview.setError(null);
         mdriverslicenseview.setError(null);
         mlicenseplateview.setError(null);
+        mstateview.setError(null);
 
         String car_color = mcarcolorview.getText().toString();
         String car_model = mcarmodelview.getText().toString();
@@ -93,6 +103,7 @@ public class DriverRegistration extends AppCompatActivity {
         String car_year = mcaryearview.getText().toString();
         String drivers_license = mdriverslicenseview.getText().toString();
         String license_plate = mlicenseplateview.getText().toString();
+        String drive_state = mstateview.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -127,12 +138,18 @@ public class DriverRegistration extends AppCompatActivity {
             focusView = mlicenseplateview;
             cancel = true;
         }
+        if(TextUtils.isEmpty(drive_state))
+        {
+            mstateview.setError("This field is required");
+            focusView = mstateview;
+            cancel = true;
+        }
         if(cancel)
         {
             focusView.requestFocus();
         }
         else {
-            mAuthTask = new registerDriver(car_brand, car_model, car_year, car_color, drivers_license, license_plate);
+            mAuthTask = new registerDriver(car_brand, car_model, car_year, car_color, drivers_license, license_plate, drive_state, DriverRegistration.this);
             mAuthTask.execute((Void) null);
             Toast.makeText(getApplicationContext(),
                     "Driver registration complete!", Toast.LENGTH_LONG).show();
@@ -150,13 +167,6 @@ public class DriverRegistration extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) // no button
-            {
-                dialog.dismiss();
-            }
-        });
         builder.setTitle("NOTIFICATION");
         builder.show();
     }
@@ -169,16 +179,19 @@ public class DriverRegistration extends AppCompatActivity {
         private final String mcar_color;
         private final String mdrivers_license;
         private final String mlicense_plate;
+        private final String mstate;
 
-        private RegisterActivity mActivity;
 
-        registerDriver(String car_brand, String car_model, String car_year, String car_color, String drivers_license, String license_plate){
+
+        registerDriver(String car_brand, String car_model, String car_year, String car_color, String drivers_license, String license_plate, String drive_state, DriverRegistration activity){
             mcar_brand = car_brand;
             mcar_model = car_model;
             mcar_year = car_year;
             mcar_color = car_color;
             mdrivers_license = drivers_license;
             mlicense_plate = license_plate;
+            mstate = drive_state;
+            mActivity = activity;
         }
 
         protected Boolean doInBackground(Void... params) {
@@ -186,13 +199,22 @@ public class DriverRegistration extends AppCompatActivity {
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
                 JSONObject data = new JSONObject();
+                data.put("DriverAdd", "");
+                data.put("UID", uid);
+                data.put("make", mcar_brand);
+                data.put("model", mcar_model);
+                data.put("year", mcar_year);
+                data.put("color", mcar_color);
+                data.put("drivers_license", mdrivers_license);
+                data.put("license_plate", mlicense_plate);
+                data.put("state", mstate);
 
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
                 System.out.println(cred);
 
-                networkRequest.send("../cgi-bin/db-add.py", "POST", cred);
+                networkRequest.send("../cgi-bin/jverify.py", "POST", cred);
                 JSONArray response = networkRequest.getResponse();
 
                 if (response != null) {
@@ -209,7 +231,7 @@ public class DriverRegistration extends AppCompatActivity {
                 }
 
             } catch (Exception e) {
-                System.out.println("Debug in RegisterNewUser in background: \n" + e.getMessage());
+                System.out.println("Debug in RegisterDriver in background: \n" + e.getMessage());
                 return false;
             }
             return false;
@@ -217,9 +239,15 @@ public class DriverRegistration extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+            Intent intent = new Intent(mActivity, HomeActivity.class);
+            startActivity(intent);
 
         }
+        @Override
+        protected void onProgressUpdate(Void... values) {
 
+        }
     }
 
 }

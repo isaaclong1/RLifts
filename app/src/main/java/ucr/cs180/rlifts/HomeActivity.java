@@ -66,6 +66,9 @@ public class HomeActivity extends AppCompatActivity
         if(driver_flag == 0)
         {
             Intent intent = new Intent(this, DriverRegistration.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("UID", uid);
+            intent.putExtras(bundle);
             startActivity(intent);
         }
     }
@@ -131,7 +134,10 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     }
 
@@ -228,7 +234,6 @@ public class HomeActivity extends AppCompatActivity
                     "Logout Successful", Toast.LENGTH_LONG).show();
             startActivity(intent);
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -4,6 +4,7 @@
     <!-- Strings related to login -->
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
+    <string name="state">State</string>
     <string name="leave_time">Departure Time</string>
     <string name="Car_brand">Car Brand</string>
     <string name="Car_model">Car Model</string>
