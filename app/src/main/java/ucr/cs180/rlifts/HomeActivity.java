@@ -32,6 +32,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import javax.xml.transform.Result;
+
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener, RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener {
 
@@ -45,7 +47,20 @@ public class HomeActivity extends AppCompatActivity
     private static String global_status;
     private JSONArray profileData;
     private JSONArray picture;
+    final Handler ha = new Handler();
+    Runnable messageRunnable = new Runnable() {
+        @Override
+        public void run() {
+            new Get_Driver_Message().execute();
 
+            if (flag) {
+                showAlert();
+                flag = false;
+            }
+
+            ha.postDelayed(this, 1000);
+        }
+    };
     Handler mHandler;
 
     public void post_ride_click(View view) throws IOException {
@@ -102,20 +117,9 @@ public class HomeActivity extends AppCompatActivity
         }
 
         new Get_Rides().execute();
-        final Handler ha = new Handler();
-        ha.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new Get_Driver_Message().execute();
 
-                if(flag) {
-                    showAlert();
-                    flag = false;
-                }
 
-                ha.postDelayed(this, 1000);
-            }
-        }, 1000);
+        ha.postDelayed(messageRunnable, 1000);
 
         new getProfileInformation().execute();
     }
@@ -225,7 +229,10 @@ public class HomeActivity extends AppCompatActivity
             Intent intent = new Intent(this, LoginActivity.class);
             Toast.makeText(getApplicationContext(),
                     "Logout Successful", Toast.LENGTH_LONG).show();
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            ha.removeCallbacks(messageRunnable);
             startActivity(intent);
+            //finish();
         }
 
 
@@ -235,17 +242,17 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteractionR(Uri uri) {
-
-    }
-
-    @Override
     public void onFragmentInteractionP(Uri uri) {
 
     }
 
     @Override
     public void onFragmentInteractionD(Uri uri) {
+
+    }
+
+    @Override
+    public void onFragmentInteractionR(Uri uri) {
 
     }
 
@@ -315,6 +322,11 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         protected void onProgressUpdate(Void... values) {
+        }
+
+        @Override
+        protected void onCancelled(){
+            finish();
         }
 
     }

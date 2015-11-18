@@ -35,6 +35,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -541,9 +542,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Bundle my_bundle = new Bundle();
                 my_bundle.putString("global_uid", global_uid);
                 intent.putExtra("global_uid", global_uid);
+                LoginManager.getInstance().logOut();
                 startActivity(intent);
                 //finish();
             } else {
+                LoginManager.getInstance().logOut();
                 startActivity(mIntent);
             }
         }
