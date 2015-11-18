@@ -1,0 +1,55 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="ucr.cs180.rlifts.Tutorial">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        tools:context="ucr.cs180.rlifts.FirstRideorDrive">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:text="@string/welcome_text"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                android:textSize="50dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:text="@string/paragraph"
+                android:textSize="18dp"
+
+                />
+
+
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
+    </RelativeLayout>
+
+
+</FrameLayout>

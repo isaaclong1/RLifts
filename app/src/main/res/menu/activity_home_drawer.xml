@@ -9,11 +9,13 @@
             android:title="Rider" />
         <item android:id="@+id/nav_driver" android:icon="@drawable/car186_2"
             android:title="Driver" />
-        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
-            android:title="Tools" />
         <item android:id="@+id/logout" android:title="Logout" />
-    </group>
 
+        <!--        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
+                    android:title="Tools" />
+        -->
+    </group>
+<!--
     <item android:title="Communicate">
         <menu>
             <item android:id="@+id/nav_share" android:icon="@android:drawable/ic_menu_share"
@@ -22,5 +24,5 @@
                 android:title="Send" />
         </menu>
     </item>
-
+-->
 </menu>
