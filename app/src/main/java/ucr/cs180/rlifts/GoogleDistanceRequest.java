@@ -42,48 +42,47 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.maps.DistanceMatrixApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.Unit;
+
 
 public class GoogleDistanceRequest{
     public String passed_uid;
-    public boolean status = false;
+    public boolean status;
     public JSONObject response;
     public GoogleDistanceRequest(){
 
     }
 
     public boolean makeConnection(String start, String destination, String uid) {
-        String distance = Distance_matrix + start + "&" + Destination + destination + "&" + Mode + "&" + Units + "&" + Api_Key;
-        Dist = distance.replaceAll("\\s+", "");
         passed_uid = uid;
-        Start = start;
-        Dest = destination;
+        Start[0] = start;
+        Dest[0] = destination;
         new LongOperation().execute();
-        return true;
-
+        try{
+            Thread.sleep(500);
+        }catch(Exception e){
+            System.out.println("Well damn...");
+        }
+        System.out.println("The status flag is: " + status);
+        return status;
     }
 
-    private String Dist;
-    private String Start;
-    private String Dest;
-    private String Distance_matrix = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="; //link to calculate distance and travel time #google
-    private String Api_Key = "key=AIzaSyACd20_Z99OGiI1aQaN5pN1eKtTtyLh8jM"; // used for the link
-    private String Mode = "mode=driving";
-    private String Units = "units=imperial";
-    private String Destination = "destinations=";
-    private final String USER_AGENT = "Mozilla/5.0";
-    private String origin;
-    private String destin;
-    private String distance1;
-    private String duration;
-    private String delim = ":";
-    private String delimSpace = " ";
-    private Double BASEFARE = 5.00;
-    private String DOLLARSIGN = "$";
+    private String[] Start = new String[1];
+    private String[] Dest = new String[1];
+    private String Api_Key = "AIzaSyACd20_Z99OGiI1aQaN5pN1eKtTtyLh8jM"; // used for the link
+    private String Geo_Api_Key = "AIzaSyAw4-hFkaJFAcVQiz6-Muka5MtU7nU9FAI";
+
+    private GeoApiContext distanceContext = new GeoApiContext().setApiKey(Api_Key);
+    private GeoApiContext geoContext = new GeoApiContext().setApiKey(Geo_Api_Key);
 
     //use these for your JSON Object to send to Create RIDES table
     private String db_pickup;
     private String db_destination;
-    private String db_cost;
     private String db_distance;
     private String db_duration;
     private Double db_costFinal;
@@ -93,127 +92,70 @@ public class GoogleDistanceRequest{
 
         @Override
         protected String doInBackground(String... params) {
-
-            String distance = Distance_matrix + Start + "&" + Destination + Dest + "&" + Mode + "&" + Units + "&" + Api_Key;
-            distance = distance.replaceAll("\\s+", "");
+            //Try catch to process a distance matrix request
             try {
+                //Set the parameters for the request here
+                DistanceMatrix matrix = DistanceMatrixApi.newRequest(distanceContext)
+                        .origins(Start)
+                        .destinations(Dest)
+                        .units(Unit.IMPERIAL)
+                        .await();
+                //Pull the information from the matrix here, access via their respective arrays
+                db_distance = matrix.rows[0].elements[0].distance.humanReadable;
+                db_duration = matrix.rows[0].elements[0].duration.humanReadable;
+                db_pickup = matrix.originAddresses[0];
+                db_destination = matrix.destinationAddresses[0];
+                db_costFinal = 0.0;
+                System.out.println("Your pickup location is: " + db_pickup);
+            } catch (Exception e) {
+                status = false;
+                System.out.println("Status is: " + status);
+                e.printStackTrace();
+                return e.toString();
+            }
 
-                URL url = new URL(distance);
-                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-                urlConn.setRequestMethod("GET");
-                urlConn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                urlConn.setDoInput(true);
 
-                //urlConn.connect();
-                InputStream in = new BufferedInputStream(urlConn.getInputStream());
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line;
+            //Arrays to hold coordinates for the start and endpoints
+            double[] pickupCoordinates;
+            double[] destinationCoordinates;
+            //Call the googleCoordinateRequest function to calculate the lat/long values
+            pickupCoordinates = googleCoordinateRequest(db_pickup);
+            destinationCoordinates = googleCoordinateRequest(db_destination);
 
-                while ((line = reader.readLine()) != null) {
-                    //System.out.println("line: " + line);
-                    JSONObject j = null;
+            if(pickupCoordinates.length == 0 || destinationCoordinates.length == 0)
+            {
+                status = false;
+                return "Error";
+            }
 
-                    try {
-                        int destination_addresses = line.indexOf ("destination_addresses");
-                        int origin_addresses = line.indexOf("origin_addresses");
-                        int distance_index = line.indexOf("distance");
-                        int text_index = line.indexOf("text");
-                        if (origin_addresses == -1)
-                        {
-                            //error found
-                        }
-                        else
-                        {
-                            // System.out.println("Found OriginAdress at this index: " + origin_addresses + line );
-                            origin = line;
-                        }
-
-                        if (destination_addresses == -1)
-                        {
-                            //System.out.println("distance index NOT FOUND");
-                        }
-                        else
-                        {
-                            // System.out.println("Found destinationAddy at this index: " + destination_addresses + line );
-                            destin = line;
-
-                        }
-
-                        if (distance_index == -1)
-                        {
-                            // System.out.println("distance index NOT FOUND");
-                        }
-                        else
-                        {
-                            // System.out.println("Found distance at this index: " + distance_index + line );
-
-                        }
-
-                        if (text_index == -1)
-                        {
-                            // System.out.println("text NOT FOUND");
-                        }
-                        else
-                        {
-                            // System.out.println("Text index found: " + text_index + line);
-                            if (line.contains("mins"))
-                            {
-                                duration = line;
-                            }
-                            else
-                            {
-                                distance1 = line;
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        System.out.println(""); // so we can see python errors from server and still finish execution
-                    }
-                }
-            } catch (IOException e) {e.printStackTrace();}
-            //System.out.println(origin + " " + destin + " " + duration + " " + distance1 );
-            //parsing tags values found in [1]
-            String[] str_array = origin.split(delim);
-            db_pickup = str_array[1];
-            str_array = destin.split(delim);
-            db_destination = str_array[1];
-            str_array = duration.split(delim);
-            db_duration = str_array[1];
-            str_array = distance1.split(delim);
-            db_distance = str_array[1];
-
-            db_pickup = db_pickup.replace("[","");
-            db_pickup = db_pickup.replace("]", "");
-            db_pickup = db_pickup.replace("\"","");
-
-            db_destination = db_destination.replace("[","");
-            db_destination = db_destination.replace("]","");
-            db_destination = db_destination.replace("\"","");
-
-            db_distance = db_distance.replace("\"","");
-
-            //creating cost, should make a function but for now just forcing distance miles into $
-            str_array = db_distance.split(delimSpace);
-            db_cost = str_array[1];
-
-            double final_cost = Double.parseDouble(db_cost);
-            final_cost = final_cost + BASEFARE;
-            db_costFinal = final_cost;
-
-            //System.out.println("THE COST IS: "+ DOLLARSIGN +  + final_cost);
-
-            db_duration = db_duration.replace("\"","");
-
-            System.out.println(db_pickup + " " + db_destination + " " + db_duration + " " + db_distance );
-
-            //calculateRide(db_duration, db_distance);
-            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance, db_costFinal);
-
+            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance, db_costFinal, pickupCoordinates, destinationCoordinates);
+            status = true;
 
             return "Executed";
         }
 
-        protected boolean db_addRide (String pickup, String destination, String duration,String distance, Double Cost)
+        //Request lat/long coordinates from google maps API
+        protected double[] googleCoordinateRequest (String location)
+        {
+            double[] temp = new double[0];
+            GeocodingResult[] results = new GeocodingResult[0];
+            try {
+                results = GeocodingApi.geocode(geoContext, location).await();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return temp;
+            }
+
+            status = true;
+
+            //Create a double array to store the lat/long so we can return it to the calling function
+            double[] coordinateArray = new double[2];
+            coordinateArray[0] = results[0].geometry.location.lat;
+            coordinateArray[1] = results[0].geometry.location.lng;
+            return coordinateArray;
+        }
+
+        protected boolean db_addRide (String pickup, String destination, String duration,String distance, Double Cost, double[] pickupCoordinates, double[] destinationCoordinates)
         {
             System.out.println(destination);
             try {
@@ -227,6 +169,10 @@ public class GoogleDistanceRequest{
                 data.put("duration", duration );
                 data.put("cost", Cost);
                 data.put("UID", passed_uid);
+                data.put("start_latitude", pickupCoordinates[0]);
+                data.put("start_longitude", pickupCoordinates[1]);
+                data.put("end_latitude", destinationCoordinates[0]);
+                data.put("end_longitude", destinationCoordinates[1]);
                 //data.put("cost", );
 
                 JSONArray cred = new JSONArray();
@@ -250,12 +196,12 @@ public class GoogleDistanceRequest{
             }
             return false;
         }
-
-        public boolean tell_home_activity(){
-            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance,db_costFinal);
-            return result;
-        }
-
+        /*
+                public boolean tell_home_activity(){
+                    boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance,db_costFinal);
+                    return result;
+                }
+        */
         protected void calculateRide(String duration, String distance){
             //calculating
             //int miles = Integer.parseInt(distance);

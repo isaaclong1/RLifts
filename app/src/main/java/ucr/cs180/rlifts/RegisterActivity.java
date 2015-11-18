@@ -163,6 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mEmailView;
     private String encoded_photo;
     private String image_path;
+    private String Facebook_ID_from_intent;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,7 +176,6 @@ public class RegisterActivity extends AppCompatActivity {
         TextView phoneview = (TextView) findViewById(R.id.Phone_num);
         TextView birthdayview = (TextView) findViewById(R.id.Birthday);
         TextView emailview = (TextView) findViewById(R.id.email);
-
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -190,6 +190,7 @@ public class RegisterActivity extends AppCompatActivity {
             boolean hasName = extrasBundle.containsKey("username");
             boolean hasBirthday = extrasBundle.containsKey("birthday");
             boolean hasEmail = extrasBundle.containsKey("email");
+            boolean hasFBid = extrasBundle.containsKey("fbid");
             if(hasName){
                 String uname_from_intent = extrasBundle.getString("username"); //username is their first and last name
                 String delim = " ";
@@ -205,6 +206,13 @@ public class RegisterActivity extends AppCompatActivity {
             if(hasBirthday){
                 String birthday_from_intent = extrasBundle.getString("birthday");
                 birthdayview.setText(birthday_from_intent);
+            }
+            if(hasFBid){
+                Facebook_ID_from_intent = extrasBundle.getString("fbid");
+            }
+            else
+            {
+                Facebook_ID_from_intent = null;
             }
         } catch(NullPointerException n) {}
 
@@ -297,12 +305,12 @@ public class RegisterActivity extends AppCompatActivity {
             focusView = mPasswordView;
             cancel = true;
         }
-        //if(!password.equals(confirm_pw))
-        //{
-         //   mPasswordView.setError("Passwords do not match");
-        //    focusView = mPasswordView;
-        //    cancel = true;
-        //}
+        if(!password.equals(confirm_pw))
+        {
+            mPasswordView.setError("Passwords do not match");
+            focusView = mPasswordView;
+            cancel = true;
+        }
         if(cancel)
         {
             focusView.requestFocus();
@@ -333,6 +341,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isPhoneValid(String phone){
         return phone.length() >= 10;
     }
+
     public class registerUser extends AsyncTask<Void, Void, Boolean> {
 
         private final String mFirst_name;
@@ -343,6 +352,7 @@ public class RegisterActivity extends AppCompatActivity {
         private final String mconfirm_password;
         private final String musername;
         private final String mEmail;
+        private String global_uid;
 
         private RegisterActivity mActivity;
 
@@ -373,6 +383,7 @@ public class RegisterActivity extends AppCompatActivity {
                 data.put("password", mpassword);
                 data.put("email", mEmail);
                 data.put("photo", encoded_photo);
+                data.put("fbid", Facebook_ID_from_intent);
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
@@ -385,6 +396,8 @@ public class RegisterActivity extends AppCompatActivity {
                     for (int i = 0; i < response.length(); i++) {
                         System.out.println("doing check: ");
                         if (response.getJSONObject(i).get("status").equals("ok")) {
+                            global_uid = response.getJSONObject(i).get("UID").toString();
+                            System.out.println("Your UID is: " + global_uid);
                             System.out.println("Successfully received confirmation from server for register user.");
                             return true;
                         }
@@ -412,6 +425,9 @@ public class RegisterActivity extends AppCompatActivity {
             if (success) {
                 // How to call an intent here?
                 Intent intent = new Intent(mActivity, HomeActivity.class);
+                Bundle my_bundle = new Bundle();
+                my_bundle.putString("global_uid", global_uid);
+                intent.putExtra("global_uid", global_uid);
                 startActivity(intent);
                 //finish();
             } else {

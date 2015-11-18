@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import javax.xml.transform.Result;
 
 
 
@@ -46,7 +47,20 @@ public class HomeActivity extends AppCompatActivity
     private JSONArray profileData;
     private JSONArray picture;
     private static int driver_flag;
+    final Handler ha = new Handler();
+    Runnable messageRunnable = new Runnable() {
+        @Override
+        public void run() {
+            new Get_Driver_Message().execute();
 
+            if (flag) {
+                showAlert();
+                flag = false;
+            }
+
+            ha.postDelayed(this,1000);
+        }
+    };
     Handler mHandler;
 
     public void post_ride_click(View view) throws IOException {
@@ -60,6 +74,8 @@ public class HomeActivity extends AppCompatActivity
         if (flag) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(),"Invalid Address!", Toast.LENGTH_LONG).show();
         }
 
         new valid_driver().execute();
@@ -101,6 +117,7 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        getSupportActionBar().setTitle("Home");
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -110,20 +127,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         new Get_Rides().execute();
-        final Handler ha = new Handler();
-        ha.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new Get_Driver_Message().execute();
-
-                if(flag) {
-                    showAlert();
-                    flag = false;
-                }
-
-                ha.postDelayed(this, 1000);
-            }
-        }, 1000);
+        ha.postDelayed(messageRunnable, 1000);
 
         new getProfileInformation().execute();
     }
@@ -232,6 +236,8 @@ public class HomeActivity extends AppCompatActivity
             Intent intent = new Intent(this, LoginActivity.class);
             Toast.makeText(getApplicationContext(),
                     "Logout Successful", Toast.LENGTH_LONG).show();
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            ha.removeCallbacks(messageRunnable);
             startActivity(intent);
         }
 
@@ -306,7 +312,7 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
 
-                System.out.println("MESSAGES : " + response);
+                //System.out.println("MESSAGES : " + response);
 
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
@@ -320,6 +326,10 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         protected void onProgressUpdate(Void... values) {
+        }
+        @Override
+        protected void onCancelled(){
+            finish();
         }
 
     }
@@ -344,7 +354,9 @@ public class HomeActivity extends AppCompatActivity
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
                 profileData = response;
-                System.out.println(response);
+                //System.out.println(response);
+                System.out.flush();
+                System.out.println("Attempting to get response here: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
@@ -530,6 +542,7 @@ public class HomeActivity extends AppCompatActivity
                 JSONArray cred = new JSONArray();
                 cred.put(data);
 
+                System.out.println("valid_driver before check: " + cred);
                 networkRequest.send("../cgi-bin/jverify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
                 System.out.println(response);

@@ -48,8 +48,8 @@ public class NetworkRequest {
             urlConn.setDoInput(true);
             if(httpMethod.equals("POST")) {
                 // if it's a post, write data first. Data should be sent and received in JSON UTF-8
-                System.out.println("Doing post:");
-                System.out.println(payload);
+                //System.out.println("Doing post:");
+                //System.out.println(payload);
                 urlConn.setDoOutput(true);
                 urlConn.setChunkedStreamingMode(0);
                 if(urlConn.getOutputStream() == null) System.out.println("We got problems!");
@@ -59,7 +59,7 @@ public class NetworkRequest {
 
                 writer.close();
                 out.close();
-                System.out.println("Successfully sent POST");
+                //System.out.println("Successfully sent POST");
             }
 
             // Handle response from server
