@@ -1,47 +1,52 @@
 package ucr.cs180.rlifts;
 
+//import android.app.Fragment;
 import android.app.Activity;
+import android.app.Fragment;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.android.PolyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RiderFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RiderFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class RiderFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+
+
+public class RiderFragment extends Fragment implements OnMapReadyCallback {
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -49,46 +54,103 @@ public class RiderFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     public static int driver_id;
     public static String requester; // jai said this
+    public static GoogleMap myMap;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RiderFragment.
-     */
     public static String[] RIDES = {"TEMP", "temp", "temp", "temp"};
     public static List<String> rides_list = new ArrayList<String>();
-    //private static JSONArray received_json;
+    public static List<String[]> originDestination = new ArrayList<String[]>();
+    public GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAw4-hFkaJFAcVQiz6-Muka5MtU7nU9FAI")
+            .setQueryRateLimit(3)
+            .setConnectTimeout(1, TimeUnit.SECONDS)
+            .setReadTimeout(1, TimeUnit.SECONDS)
+            .setWriteTimeout(1, TimeUnit.SECONDS);
 
-    /*public static RiderFragment newInstance() {
-        Bundle args = new Bundle();
-        RiderFragment fragment = new RiderFragment();
-        fragment.setArguments(args);
-        return fragment;
-    } */
+    public static DirectionsRoute[] routes;
+
+    private class RouteGenerator extends AsyncTask<GoogleMap, PolylineOptions, String>{
+
+        @Override
+        protected String doInBackground(GoogleMap... params){
+            for(int i = 0; i < originDestination.size(); i++) {
+                int R = (int) (Math.random() * 256);
+                int G = (int) (Math.random() * 256);
+                int B = (int) (Math.random() * 256);
+
+                String uidVal = originDestination.get(i)[0];
+                String originRoute = originDestination.get(i)[1];
+                String destinationRoute = originDestination.get(i)[2];
+                try {
+                    //need to put some or all of this on the background thread
+                    routes = DirectionsApi.newRequest(context)
+                            .origin(originRoute)
+                            .destination(destinationRoute)
+                            .await();
+                    //Pull the information from the response here, access via their respective arrays
+
+                    for (int j = 0; j < routes[0].legs.length; j++) {
+                        for (int k = 0; k < routes[0].legs[j].steps.length; k++) {
+                            List<LatLng> coords = PolyUtil.decode(routes[0].legs[j].steps[k].polyline.getEncodedPath());
+                            System.out.println(coords);
+
+                            Color lineColor = new Color();
+                            PolylineOptions routeOptions = new PolylineOptions()
+                                    .addAll(coords)
+                                    .width(10)
+                                    .color(lineColor.rgb(R, G, B));
+                            publishProgress(routeOptions);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Directions API Screwed up: ");
+                    e.printStackTrace();
+                }
+
+
+
+            }
+            return "LOL";
+        }
+
+        @Override
+        protected  void onProgressUpdate(PolylineOptions... lineOps){
+            Polyline polyline = myMap.addPolyline(lineOps[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // might want to change "executed" for the returned string passed
+            // into onPostExecute() but that is upto you
+        }
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.fragment_rider, container, false);
-        ListView listView = (ListView) mainView.findViewById(R.id.listView);
-        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, rides_list));
-        listView.setClickable(true);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //super.onCreateView(savedInstanceState);
 
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // When clicked perform some action...
-                String choice = ((TextView) view).getText().toString();
-                int place = choice.indexOf("Driver's ID");
-                int temp = Integer.parseInt(choice.substring(place + 15, choice.length()));
-                driver_id = temp;
-                new send_message().execute();
-            }
-            // When clicked perform some action...
-        });
+        MapFragment mapFragment = (MapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         return mainView;
     }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        // Add a marker in Sydney, Australia, and move the camera.
+        LatLng irvine = new LatLng(33.9665302, -117.3521857);
+        map.addMarker(new MarkerOptions().position(irvine).title("Marker in Irvine (Hardcoded)"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(irvine));
+
+        myMap = map;
+
+        new RouteGenerator().execute();
+
+
+
+    }
+
     // TODO: Rename and change types and number of parameters
     public static RiderFragment newInstance(String param1, String param2, JSONArray response, String uid) {
         RiderFragment fragment = new RiderFragment();
@@ -120,6 +182,11 @@ public class RiderFragment extends Fragment {
             String mdur = " \nDuration: ";
             String mcost = "\nEstimated Cost: $";
             String mdriverID = "\nYour Driver's ID #: ";
+            double sLat = 0.0;
+            double sLong = 0.0;
+            double eLat = 0.0;
+            double eLong = 0.0;
+
             String newline = "\n";
 
             //THIS HOW YOU ACCESS THE OBJECT INFORMATION
@@ -134,6 +201,11 @@ public class RiderFragment extends Fragment {
                 duration = ride.getString("duration");
                 uid = ride.getString("UID");
                 cost = ride.getString("cost");
+                String[] startFin = new String[3];
+                startFin[0] = uid;
+                startFin[1] = pickup;
+                startFin[2] = destination;
+                originDestination.add(startFin);
 
                 sendby_id = uid;
                 System.out.println("UID here: " + uid);
