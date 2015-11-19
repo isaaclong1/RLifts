@@ -4,6 +4,8 @@ package ucr.cs180.rlifts;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -56,6 +58,14 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
     public static String requester; // jai said this
     public static GoogleMap myMap;
 
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment RiderFragment.
+     */
     public static String[] RIDES = {"TEMP", "temp", "temp", "temp"};
     public static List<String> rides_list = new ArrayList<String>();
     public static List<String[]> originDestination = new ArrayList<String[]>();

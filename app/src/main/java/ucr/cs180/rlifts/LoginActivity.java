@@ -35,6 +35,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -558,5 +559,81 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return global_uid;
         }
     }
-}
 
+    public class FacebookLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private LoginActivity mActivity;
+        private final String mFacebookID;
+        private Intent mIntent;
+
+        FacebookLoginTask(String fbid, LoginActivity activity, Intent intent) {
+            mActivity = activity;
+            mFacebookID = fbid;
+            mIntent = intent;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Users", "");
+                data.put("fbid", mFacebookID);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-verify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for login existing user.");
+                            global_uid = response.getJSONObject(i).get("UID").toString();
+                            System.out.println(global_uid);
+                            return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mFBAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                // How to call an intent here?
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                Bundle my_bundle = new Bundle();
+                my_bundle.putString("global_uid", global_uid);
+                intent.putExtra("global_uid", global_uid);
+                LoginManager.getInstance().logOut();
+                startActivity(intent);
+                //finish();
+            } else {
+                LoginManager.getInstance().logOut();
+                startActivity(mIntent);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mFBAuthTask = null;
+            showProgress(false);
+        }
+
+        protected String get_uid(){
+            return global_uid;
+        }
+    }
+}

@@ -1,9 +1,19 @@
 <resources>
-    <string name="app_name">RLifts</string>
+    <string name="app_name">R\'Lifts</string>
 
     <!-- Strings related to login -->
 
+
+
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
+    <string name="state">State</string>
+    <string name="leave_time">Departure Time</string>
+    <string name="Car_brand">Car Brand</string>
+    <string name="Car_model">Car Model</string>
+    <string name="Car_year">Car Year</string>
+    <string name="Car_color">Car Color</string>
+    <string name="drivers_license">Drivers License #</string>
+    <string name="license_plate">Car License Plate</string>
     <string name="Choice1"></string>
     <string name="Select">Select</string>
     <string name="Post_ride">Post ride</string>
@@ -48,4 +58,29 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="welcome_text">Welcome to R\'Lifts</string>
+    <string name="riderbutton">I want to get a Ride</string>
+    <string name="driverbutton">I want to be a Driver</string>
+    <string name="paragraph">On the top left corner, you can open the navigation drawer.
+        From there you can go see:\n
+        \u2022 Your profile information.\n
+        \u2022 List of rides near you that you can request. In the list you can filter by.... (to be added)\n
+        \n
+        In driver mode, You\'ll be able to post ride for everyone around you to see.
+        If someone near you request your ride, you\'ll get a message and has a chance to
+        accept or decline their request.
+        \n</string>
+
+
+
+
+
+
+
+
+    <string name="title_activity_driver_registration">DriverRegistration</string>
 </resources>

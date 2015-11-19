@@ -1,5 +1,6 @@
 package ucr.cs180.rlifts;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -66,6 +67,7 @@ public class NetworkRequest {
             InputStream in = new BufferedInputStream(urlConn.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line;
+
 
             while((line = reader.readLine()) != null) {
                 System.out.println("line: " + line);
