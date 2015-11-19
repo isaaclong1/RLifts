@@ -1,8 +1,10 @@
 package ucr.cs180.rlifts;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.support.v4.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.app.AlertDialog;
@@ -34,7 +38,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener, RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener,
+        RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener,
+        Tutorial.OnFragmentInteractionListener {
 
     private EditText StartView;
     private EditText DestinationView;
@@ -113,13 +119,11 @@ public class HomeActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportActionBar().setTitle("Home");
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -131,7 +135,15 @@ public class HomeActivity extends AppCompatActivity
         new Get_Rides().execute();
         ha.postDelayed(messageRunnable, 1000);
 
+       
+
         new getProfileInformation().execute();
+        Fragment fragment = null;
+        fragment = Tutorial.newInstance("string1", "string2");
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+
     }
 
     @Override
@@ -232,7 +244,7 @@ public class HomeActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             getSupportActionBar().setTitle("Driver");
 
-        } else if (id == R.id.nav_manage) {
+        }
 
         } else if(id == R.id.logout){
             Intent intent = new Intent(this, LoginActivity.class);
@@ -262,6 +274,10 @@ public class HomeActivity extends AppCompatActivity
     public void onFragmentInteractionD(Uri uri) {
 
     }
+    @Override
+    public void onFragmentInteractionF(Uri uri) {
+    }
+
 
     private class Get_Driver_Message extends AsyncTask<String, Void, Void> {
         @Override
@@ -335,8 +351,8 @@ public class HomeActivity extends AppCompatActivity
         }
 
     }
-    private class getProfileInformation extends AsyncTask<String, Void, Void> {
 
+    private class getProfileInformation extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
             try {

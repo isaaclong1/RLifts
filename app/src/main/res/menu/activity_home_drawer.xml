@@ -13,7 +13,6 @@
             android:title="Tools" />
         <item android:id="@+id/history" android:title="Ride history"/>
         <item android:id="@+id/logout" android:title="Logout" />
-    </group>
 
     <!--<item android:title="Communicate">
         <menu>
