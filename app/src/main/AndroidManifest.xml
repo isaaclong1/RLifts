@@ -75,6 +75,11 @@
             android:label="@string/title_activity_driver_registration"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".PaypalActivity"
+            android:label="@string/title_activity_paypal"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

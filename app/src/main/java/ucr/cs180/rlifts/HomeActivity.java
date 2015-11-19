@@ -40,7 +40,7 @@ import java.io.IOException;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener,
         RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener,
-        Tutorial.OnFragmentInteractionListener {
+        Tutorial.OnFragmentInteractionListener, PaymentListFragment.OnFragmentInteractionListener {
 
     private EditText StartView;
     private EditText DestinationView;
@@ -193,7 +193,7 @@ public class HomeActivity extends AppCompatActivity
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("YOUR ROUTE HAS BEEN SELECTED, DO YOU WANT TO TAKE THIS RIDE?").create();
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
             {
@@ -202,7 +202,7 @@ public class HomeActivity extends AppCompatActivity
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener(){
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // no button
             {
@@ -274,6 +274,13 @@ public class HomeActivity extends AppCompatActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             ha.removeCallbacks(messageRunnable);
             startActivity(intent);
+
+        } else if(id == R.id.nav_payment) {
+            System.out.println("handling payment fragment view!");
+            fragment = PaymentListFragment.newInstance("string1", "string2");
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            getSupportActionBar().setTitle("Add Tokens");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -297,6 +304,15 @@ public class HomeActivity extends AppCompatActivity
     }
     @Override
     public void onFragmentInteractionF(Uri uri) {
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+        System.out.println(id);
+
+        // start the paypal activity here
+        Intent intent = new Intent(HomeActivity.this, PaypalActivity.class);
+        startActivity(intent);
     }
 
 
