@@ -22,4 +22,18 @@
         android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_dialog_email" />
 
+    <Button
+        android:layout_width="267dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal"
+        android:text="Use PayPal!"
+        android:textStyle="bold|normal"
+        android:textSize="@dimen/loginsize"
+        android:textColor="#fefefe"
+        android:background="#00bbb3"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="startPaypal"/>
+
 </android.support.design.widget.CoordinatorLayout>
