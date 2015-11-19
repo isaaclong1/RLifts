@@ -130,6 +130,7 @@ public class HomeActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+        drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -237,6 +238,7 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         Fragment fragment = null;
+        RiderFragment dontKnowWhatThisIsFor = null;
 
         if (id == R.id.nav_profile) {
             System.out.println("handling the profile view!");
@@ -250,11 +252,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
             //fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
-            fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
+            dontKnowWhatThisIsFor = RiderFragment.newInstance("string1", "string2", send_over, uid);
             // Insert the fragment by replacing any existing fragment
             new Get_Rides().execute();
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.flContent, dontKnowWhatThisIsFor).commit();
             new Get_Rides().execute();
             getSupportActionBar().setTitle("Rider");
 
