@@ -62,9 +62,10 @@ public class GoogleDistanceRequest{
         passed_uid = uid;
         Start[0] = start;
         Dest[0] = destination;
+
         new LongOperation().execute();
         try{
-            Thread.sleep(500);
+            Thread.sleep(1000);
         }catch(Exception e){
             System.out.println("Well damn...");
         }

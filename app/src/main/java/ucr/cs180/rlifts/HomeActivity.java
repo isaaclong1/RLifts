@@ -51,9 +51,11 @@ public class HomeActivity extends AppCompatActivity
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
-            new Get_Driver_Message().execute();
+            if(driver_flag == 1){
+                new Get_Driver_Message().execute();
+            }
 
-            if (flag) {
+            if (flag == true && driver_flag == 1) {
                 showAlert();
                 flag = false;
             }
@@ -79,7 +81,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         new valid_driver().execute();
-        if(driver_flag == 0)
+        if(driver_flag == 0 && flag == true)
         {
             Intent intent = new Intent(this, DriverRegistration.class);
             Bundle bundle = new Bundle();
@@ -416,7 +418,7 @@ public class HomeActivity extends AppCompatActivity
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
                 send_over = response;
-                System.out.println(response);
+                System.out.println("Response in get_rides home activity async task: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
@@ -442,92 +444,6 @@ public class HomeActivity extends AppCompatActivity
         protected void onProgressUpdate(Void... values) {
         }
     }
-    private class set_alert extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... params) {
-            flag = false;
-            try {
-                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
-
-                JSONObject data = new JSONObject();
-                data.put("Messages", "Messages");
-                data.put("queryType", "setMessageStatus");
-                data.put("MID", m_id); // need message id
-
-
-                JSONArray cred = new JSONArray();
-                cred.put(data);
-
-                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
-                JSONArray response = networkRequest.getResponse();
-                System.out.println(response);
-                if (response != null) {
-                    for (int i = 0; i < response.length(); i++) {
-                        if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for getting rides.");
-                            //return true;
-                        }
-                    }
-                }
-
-            } catch (Exception e) { // for now all exceptions will return false
-                System.out.println("Debug in background task:\n" + e.getMessage());
-                //return false;
-            }
-            return null;
-        }
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-
-    }
-    private class set_message_status extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... params) {
-            //flag = false;
-            try {
-                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
-
-                JSONObject data = new JSONObject();
-                data.put("Messages", "Messages");
-                data.put("queryType", "setMessageStatus");
-                data.put("MID", m_id); // need message id
-
-
-                JSONArray cred = new JSONArray();
-                cred.put(data);
-
-                networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
-                JSONArray response = networkRequest.getResponse();
-                System.out.println(response);
-                if (response != null) {
-                    for (int i = 0; i < response.length(); i++) {
-                        if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for getting rides.");
-                            //return true;
-                        }
-                    }
-                }
-
-            } catch (Exception e) { // for now all exceptions will return false
-                System.out.println("Debug in background task:\n" + e.getMessage());
-                //return false;
-            }
-            return null;
-        }
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-
-    }
 
     private class valid_driver extends AsyncTask<String, Void, Void> {
         @Override
@@ -536,21 +452,24 @@ public class HomeActivity extends AppCompatActivity
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
                 JSONObject data = new JSONObject();
-                data.put("Driver_Check","");
+                data.put("Driver_Check","Driver_Check");
                 data.put("UID", uid);
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
 
-                System.out.println("valid_driver before check: " + cred);
                 networkRequest.send("../cgi-bin/jverify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
-                System.out.println(response);
+
+                System.out.println("Response in valid_driver: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            System.out.println("Successfully received confirmation from server for driver status.");
                             //return true;
+                        }
+                        else{
+                            System.out.println("WE HAVE AN ERROR IN VALID DRIVER");
                         }
                     }
                 }

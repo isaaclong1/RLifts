@@ -199,7 +199,7 @@ public class DriverRegistration extends AppCompatActivity {
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
                 JSONObject data = new JSONObject();
-                data.put("DriverAdd", "");
+                data.put("Drivers", "");
                 data.put("UID", uid);
                 data.put("make", mcar_brand);
                 data.put("model", mcar_model);
@@ -212,16 +212,15 @@ public class DriverRegistration extends AppCompatActivity {
 
                 JSONArray cred = new JSONArray();
                 cred.put(data);
-                System.out.println(cred);
 
-                networkRequest.send("../cgi-bin/jverify.py", "POST", cred);
+                networkRequest.send("../cgi-bin/jadd.py", "POST", cred);
                 JSONArray response = networkRequest.getResponse();
 
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {
                         System.out.println("doing check: ");
                         if (response.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for register user.");
+                            System.out.println("Successfully received confirmation from server for register driver.");
                             return true;
                         }
                         else {
@@ -229,6 +228,32 @@ public class DriverRegistration extends AppCompatActivity {
                         }
                     }
                 }
+                // updating the driver mode after registration
+
+                JSONObject data2 = new JSONObject();
+                data2.put("DriverModeOn", "");
+                data2.put("UID", uid);
+
+                JSONArray cred2 = new JSONArray();
+                cred2.put(data2);
+                System.out.println("Before changing driver flag: " + cred2);
+
+                networkRequest.send("../cgi-bin/jadd.py", "POST", cred2);
+                JSONArray response2 = networkRequest.getResponse();
+
+                if (response2 != null) {
+                    for (int i = 0; i < response2.length(); i++) {
+                        System.out.println("doing check: ");
+                        if (response2.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for changing driver flag mode.");
+                            return true;
+                        }
+                        else {
+
+                        }
+                    }
+                }
+
 
             } catch (Exception e) {
                 System.out.println("Debug in RegisterDriver in background: \n" + e.getMessage());
