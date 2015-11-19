@@ -21,6 +21,7 @@
             <item android:id="@+id/nav_send" android:icon="@android:drawable/ic_menu_send"
                 android:title="Send" />
         </menu>
-    </item> -->
+    </item>  -->
+    </group>
 
 </menu>

@@ -44,6 +44,7 @@ public class HomeActivity extends AppCompatActivity
 
     private EditText StartView;
     private EditText DestinationView;
+    private EditText DepartureView;
     private static String uid;
     private JSONArray send_over;
     private static boolean flag = false;
@@ -74,6 +75,7 @@ public class HomeActivity extends AppCompatActivity
     public void post_ride_click(View view) throws IOException {
         StartView = (EditText) findViewById(R.id.start);
         DestinationView = (EditText) findViewById(R.id.destination);
+        DepartureView = (EditText) findViewById(R.id.leaveTime);
         String start = StartView.getText().toString();
         String dest = DestinationView.getText().toString();
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
@@ -82,11 +84,20 @@ public class HomeActivity extends AppCompatActivity
         if (flag) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
+            showAlertforDriver();
+            StartView.setText("");
+            DestinationView.setText("");
+            DepartureView.setText("");
+
         } else {
             Toast.makeText(getApplicationContext(),"Invalid Address!", Toast.LENGTH_LONG).show();
         }
 
         new valid_driver().execute();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {}
+
         if(driver_flag == 0 && flag == true)
         {
             Intent intent = new Intent(this, DriverRegistration.class);
@@ -142,8 +153,6 @@ public class HomeActivity extends AppCompatActivity
         fragment = Tutorial.newInstance("string1", "string2");
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-
     }
 
     @Override
@@ -164,6 +173,20 @@ public class HomeActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
+    }
+    public void showAlertforDriver ()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Please wait for someone to select your ride").create();
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which) // yes buton
+            {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle ("NOTIFICATION");
+        builder.show();
     }
 
     public void showAlert ()
@@ -243,8 +266,6 @@ public class HomeActivity extends AppCompatActivity
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             getSupportActionBar().setTitle("Driver");
-
-        }
 
         } else if(id == R.id.logout){
             Intent intent = new Intent(this, LoginActivity.class);
