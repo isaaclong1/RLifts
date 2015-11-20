@@ -9,10 +9,10 @@
             android:title="Rider" />
         <item android:id="@+id/nav_driver" android:icon="@drawable/car186_2"
             android:title="Driver" />
-        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
-            android:title="Tools" />
-        <item android:id="@+id/history" android:title="Ride history"/>
-        <item android:id="@+id/logout" android:title="Logout" />
+        <item android:id="@+id/nav_payment" android:icon="@android:drawable/ic_menu_add"
+            android:title="Add Tokens" />
+        <item android:id="@+id/history" android:title="Ride history" android:icon="@android:drawable/ic_menu_agenda" />
+        <item android:id="@+id/logout" android:title="Logout" android:icon="@android:drawable/ic_menu_close_clear_cancel" />
 
     <!--<item android:title="Communicate">
         <menu>
