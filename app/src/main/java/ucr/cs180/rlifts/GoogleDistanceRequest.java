@@ -62,7 +62,7 @@ public class GoogleDistanceRequest{
         passed_uid = uid;
         Start[0] = start;
         Dest[0] = destination;
-
+        
         new LongOperation().execute();
         try{
             Thread.sleep(1000);
@@ -197,6 +197,12 @@ public class GoogleDistanceRequest{
             }
             return false;
         }
+/*
+        public boolean tell_home_activity(){
+            boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance,db_costFinal);
+            return result;
+        }
+*/
         /*
                 public boolean tell_home_activity(){
                     boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance,db_costFinal);
