@@ -116,7 +116,7 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Home");
 
-
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,12 +125,13 @@ public class HomeActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        drawer.openDrawer(Gravity.LEFT);
+        //drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -147,7 +148,6 @@ public class HomeActivity extends AppCompatActivity
         new Get_Rides().execute();
         ha.postDelayed(messageRunnable, 1000);
 
-       
 
         new getProfileInformation().execute();
         Fragment fragment = null;
@@ -313,6 +313,7 @@ public class HomeActivity extends AppCompatActivity
         System.out.println(id);
 
         // start the paypal activity here
+        //TODO: send over the string id with the intent, that way you know how many tokens they selected.
         Intent intent = new Intent(HomeActivity.this, PaypalActivity.class);
         startActivity(intent);
     }

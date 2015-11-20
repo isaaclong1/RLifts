@@ -9,7 +9,7 @@
     <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+        <android.support.v7.widget.Toolbar android:id="@+id/toolbar_1"
             android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
 
@@ -17,23 +17,11 @@
 
     <include layout="@layout/content_paypal" />
 
+    <!--
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_dialog_email" />
-
-    <Button
-        android:layout_width="267dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:layout_gravity="center_horizontal"
-        android:text="Use PayPal!"
-        android:textStyle="bold|normal"
-        android:textSize="@dimen/loginsize"
-        android:textColor="#fefefe"
-        android:background="#00bbb3"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="startPaypal"/>
+        -->
 
 </android.support.design.widget.CoordinatorLayout>

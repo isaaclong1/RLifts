@@ -9,4 +9,18 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_paypal" tools:context="ucr.cs180.rlifts.PaypalActivity">
 
+    <Button
+        android:layout_width="267dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal"
+        android:text="Use PayPal!"
+        android:textStyle="bold|normal"
+        android:textSize="@dimen/loginsize"
+        android:textColor="#fefefe"
+        android:background="#00bbb3"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="startPaypal"/>
+
 </RelativeLayout>

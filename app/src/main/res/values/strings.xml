@@ -65,14 +65,18 @@
     <string name="welcome_text">Welcome to R\'Lifts</string>
     <string name="riderbutton">I want to get a Ride</string>
     <string name="driverbutton">I want to be a Driver</string>
-    <string name="paragraph">On the top left corner, you can open the navigation drawer.
-        From there you can go see:\n
-        \u2022 Your profile information.\n
-        \u2022 List of rides near you that you can request. In the list you can filter by.... (to be added)\n
-        \n
-        In driver mode, You\'ll be able to post ride for everyone around you to see.
-        If someone near you request your ride, you\'ll get a message and has a chance to
-        accept or decline their request.
+    <string name="paragraph">Open the navigation drawer by pressing the menu icon in the top-left corner.
+        From this menu, you have a few options, described in detail below.\n
+        \u2022Profile: View your profile information.\n
+        \u2022Rider: Opens a list of rides near you that you can request. You can filter the list by.... (to be added)\n
+        \u2022Driver: Allows you to register as a driver and post a ride. Once your ride is posted, riders near you will be able to see it and request your ride.
+        If a rider requests your ride, you\'ll receive a notification and can either
+        accept or decline their request.\n
+        \u2022Add Tokens: Add mile tokens to your account via PayPal, which is the currency used by riders to pay drivers. If you do
+        not have enough tokens, you will not be allowed to request the ride.\n
+        \u2022Ride History: Look at the rides and drivers you have requested in the past.\n
+        \u2022Logout: Logout of your account.\n
+        Thanks for using RLifts! :)
         \n</string>
 
 
