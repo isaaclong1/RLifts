@@ -178,7 +178,7 @@ public class HomeActivity extends AppCompatActivity
     public void showAlertforDriver ()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Please wait for someone to select your ride").create();
+        builder.setMessage("Your ride has been posted. Please wait for someone to select your ride").create();
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
@@ -550,6 +550,8 @@ public class HomeActivity extends AppCompatActivity
 
     }
 }
+
+
 
 
 
