@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -16,6 +17,11 @@ import android.view.ViewGroup;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -44,7 +50,8 @@ import java.util.concurrent.TimeUnit;
 
 
 
-public class RiderFragment extends Fragment implements OnMapReadyCallback {
+public class RiderFragment extends Fragment implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -58,6 +65,14 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
     public static String requester; // jai said this
     public static GoogleMap myMap;
 
+    //maps api stuff
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private Location mLatitudeText;
+    private LatLng lastKnownLocation;
+
+
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -67,49 +82,63 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
      * @return A new instance of fragment RiderFragment.
      */
     public static String[] RIDES = {"TEMP", "temp", "temp", "temp"};
-    public static List<String> rides_list = new ArrayList<String>();
-    public static List<String[]> originDestination = new ArrayList<String[]>();
-    public GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAw4-hFkaJFAcVQiz6-Muka5MtU7nU9FAI")
-            .setQueryRateLimit(3)
-            .setConnectTimeout(1, TimeUnit.SECONDS)
-            .setReadTimeout(1, TimeUnit.SECONDS)
-            .setWriteTimeout(1, TimeUnit.SECONDS);
+    public static List<String> rides_list;
+    public static List<String[]> originDestination;
+    public GeoApiContext context;
 
-    public static DirectionsRoute[] routes;
 
-    private class RouteGenerator extends AsyncTask<GoogleMap, PolylineOptions, String>{
+    public static LatLng lastLoc;
+
+    private class RouteGenerator extends AsyncTask<GoogleMap, Wrapper, String>{
 
         @Override
         protected String doInBackground(GoogleMap... params){
-            for(int i = 0; i < originDestination.size(); i++) {
-                int R = (int) (Math.random() * 256);
-                int G = (int) (Math.random() * 256);
-                int B = (int) (Math.random() * 256);
+            // PolyLine Color Values
+            int R;
+            int G;
+            int B;
+            Color lineColor;
+            int routeColor;
 
-                String uidVal = originDestination.get(i)[0];
-                String originRoute = originDestination.get(i)[1];
-                String destinationRoute = originDestination.get(i)[2];
+            String uidVal;
+            String originRoute;
+            String destinationRoute;
+            String encodedLine;
+            List<LatLng> decodedPath;
+
+            PolylineOptions routeOptions;
+            DirectionsRoute[] routes;
+            Wrapper myProgress;
+
+            buildGoogleApiClient();
+            mGoogleApiClient.connect();
+
+            for(int i = 0; i < originDestination.size(); i++) {
+                R = (int) (Math.random() * 256);
+                G = (int) (Math.random() * 256);
+                B = (int) (Math.random() * 256);
+                lineColor = new Color();
+                routeColor = lineColor.rgb(R, G, B);
+
+                uidVal = originDestination.get(i)[0];
+                originRoute = originDestination.get(i)[1];
+                destinationRoute = originDestination.get(i)[2];
+
                 try {
-                    //need to put some or all of this on the background thread
+                    System.out.println("Making call to directions Api");
                     routes = DirectionsApi.newRequest(context)
                             .origin(originRoute)
                             .destination(destinationRoute)
                             .await();
-                    //Pull the information from the response here, access via their respective arrays
+                    encodedLine = routes[0].overviewPolyline.getEncodedPath();
+                    decodedPath = PolyUtil.decode(encodedLine);
+                    routeOptions = new PolylineOptions()
+                            .addAll(decodedPath)
+                            .width(15)
+                            .color(routeColor);
+                    myProgress = new Wrapper(destinationRoute,routeOptions);
+                    publishProgress(myProgress);
 
-                    for (int j = 0; j < routes[0].legs.length; j++) {
-                        for (int k = 0; k < routes[0].legs[j].steps.length; k++) {
-                            List<LatLng> coords = PolyUtil.decode(routes[0].legs[j].steps[k].polyline.getEncodedPath());
-                            System.out.println(coords);
-
-                            Color lineColor = new Color();
-                            PolylineOptions routeOptions = new PolylineOptions()
-                                    .addAll(coords)
-                                    .width(10)
-                                    .color(lineColor.rgb(R, G, B));
-                            publishProgress(routeOptions);
-                        }
-                    }
                 } catch (Exception e) {
                     System.out.println("Directions API Screwed up: ");
                     e.printStackTrace();
@@ -122,8 +151,12 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
         }
 
         @Override
-        protected  void onProgressUpdate(PolylineOptions... lineOps){
-            Polyline polyline = myMap.addPolyline(lineOps[0]);
+        protected  void onProgressUpdate(Wrapper... sweetWrappers){
+            myMap.addMarker(new MarkerOptions()
+                    .position(sweetWrappers[0].mLineOps.getPoints().get(0))
+                    .title("Headed to: " + sweetWrappers[0].mDestination));
+
+            Polyline polyline = myMap.addPolyline(sweetWrappers[0].mLineOps);
         }
 
         @Override
@@ -132,6 +165,16 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
             // into onPostExecute() but that is upto you
         }
 
+    }
+    // a wrapper class for progress updates from RouteGenerator because Java is fun!
+    public class Wrapper{
+        public final String mDestination;
+        public final PolylineOptions mLineOps;
+
+        public Wrapper(String myString, PolylineOptions myInteger){
+            mDestination = myString;
+            mLineOps = myInteger;
+        }
     }
 
     @Override
@@ -148,10 +191,13 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap map) {
-        // Add a marker in Sydney, Australia, and move the camera.
-        LatLng irvine = new LatLng(33.9665302, -117.3521857);
-        map.addMarker(new MarkerOptions().position(irvine).title("Marker in Irvine (Hardcoded)"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(irvine));
+
+        //Enable Location tracking blue dot display
+        //Includes drawing of location button in top right hand corner of map
+        map.setMyLocationEnabled(true);
+
+        //centers display on location of user when app was started. Need to change it to when rider
+        //fragment is created or refreshed...
 
         myMap = map;
 
@@ -162,8 +208,15 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static RiderFragment newInstance(String param1, String param2, JSONArray response, String uid) {
-        RiderFragment fragment = new RiderFragment();
+    public static RiderFragment newInstance(RiderFragment fragment, String param1, String param2, JSONArray response, String uid) {
+
+        rides_list = new ArrayList<String>();
+        originDestination = new ArrayList<String[]>();
+        fragment.context = new GeoApiContext().setApiKey("AIzaSyAw4-hFkaJFAcVQiz6-Muka5MtU7nU9FAI")
+                .setQueryRateLimit(3)
+                .setConnectTimeout(1, TimeUnit.SECONDS)
+                .setReadTimeout(1, TimeUnit.SECONDS)
+                .setWriteTimeout(1, TimeUnit.SECONDS);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -172,6 +225,8 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
 
         parse_json_for_displaying(response, uid);
         requester = uid;
+
+
         return fragment;
     }
 
@@ -329,5 +384,52 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback {
         @Override
         protected void onProgressUpdate(Void... values) {
         }
+    }
+
+    //Everything below written by Ben to implement Google APIs. Currently implemented here:
+    //Location Services API (8.1.0)
+
+    protected synchronized void buildGoogleApiClient() {
+        System.out.println("GoogleAPI Builder Connecting...");
+        mGoogleApiClient  = new GoogleApiClient.Builder(this.getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        // Connected to Google Play services!
+        // The good stuff goes here.
+        System.out.println("GoogleAPI Builder Connected");
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            lastLoc = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+            myMap.moveCamera(CameraUpdateFactory.newLatLng(lastLoc));
+        }
+        else{
+            System.out.println("Failed to get last known location. Setting to 0.0, 0.0");
+            lastLoc = new LatLng(0.0,0.0);
+        }
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        System.out.println("GoogleAPI Builder Suspended");
+        // The connection has been interrupted.
+        // Disable any UI components that depend on Google APIs
+        // until onConnected() is called.
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        System.out.println("GoogleAPI Builder Failed");
+        // This callback is important for handling errors that
+        // may occur while attempting to connect with Google.
+        //
+        // More about this in the 'Handle Connection Failures' section.
     }
 }

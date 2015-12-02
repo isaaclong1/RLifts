@@ -23,6 +23,10 @@
     <!-- For Paypal -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- Locations Persmission -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
     <application
 
         android:allowBackup="true"
