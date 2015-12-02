@@ -22,7 +22,7 @@
             android:layout_height="120dp"
             android:id="@+id/imageButton"
             android:scaleType="fitCenter"
-            android:src="@drawable/addphoto_icon"
+            android:src="@drawable/addcar_icon"
             android:background="#263238"
             android:layout_gravity="center_horizontal"
             android:layout_below="@+id/editText"
