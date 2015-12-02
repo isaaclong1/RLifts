@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -136,7 +138,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                             .addAll(decodedPath)
                             .width(15)
                             .color(routeColor);
-                    myProgress = new Wrapper(destinationRoute,routeOptions);
+                    myProgress = new Wrapper(destinationRoute,routeOptions, uidVal);
                     publishProgress(myProgress);
 
                 } catch (Exception e) {
@@ -154,7 +156,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         protected  void onProgressUpdate(Wrapper... sweetWrappers){
             myMap.addMarker(new MarkerOptions()
                     .position(sweetWrappers[0].mLineOps.getPoints().get(0))
-                    .title("Headed to: " + sweetWrappers[0].mDestination));
+                    .title(sweetWrappers[0].driverID + "is headed to: " + sweetWrappers[0].mDestination));
 
             Polyline polyline = myMap.addPolyline(sweetWrappers[0].mLineOps);
         }
@@ -170,10 +172,12 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
     public class Wrapper{
         public final String mDestination;
         public final PolylineOptions mLineOps;
+        public final String driverID;
 
-        public Wrapper(String myString, PolylineOptions myInteger){
+        public Wrapper(String myString, PolylineOptions myInteger, String dID){
             mDestination = myString;
             mLineOps = myInteger;
+            driverID = dID;
         }
     }
 
@@ -185,6 +189,8 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         MapFragment mapFragment = (MapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
 
         return mainView;
     }
@@ -198,6 +204,41 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
 
         //centers display on location of user when app was started. Need to change it to when rider
         //fragment is created or refreshed...
+
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(final Marker arg0) {
+                // display AlertDialog with full ride details (driver info, leave time, start & end location, cost)
+
+                // 1. Instantiate an AlertDialog.Builder with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage("Driver: \nDestination: " + arg0.getTitle() + "\nDeparture Time: \nCost: ")
+                        .setTitle("Would you like to take this ride?");
+
+                // 2a. Add the buttons
+                builder.setPositiveButton("Hell yes!", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //this is a bad way to do this but okay...
+                        requester = "Ben (Hardcoded)";
+                        driver_id = arg0.getTitle().charAt(0);
+                        send_message rideMessage = new send_message();
+                        rideMessage.execute("Someone wants to take your ride");
+                    }
+                });
+                builder.setNegativeButton("Fuck no!", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+                // 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         myMap = map;
 
@@ -432,4 +473,6 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         //
         // More about this in the 'Handle Connection Failures' section.
     }
+
+
 }
