@@ -9,7 +9,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -45,6 +47,7 @@ public class HomeActivity extends AppCompatActivity
     private JSONArray picture;
     private static int driver_flag;
     final Handler ha = new Handler();
+    FloatingActionButton fab;
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
@@ -106,8 +109,11 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Home");
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,7 +121,7 @@ public class HomeActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-        */
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -251,6 +257,8 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             System.out.println("handling the profile view!");
+            fab.setVisibility(View.INVISIBLE);
+
             // TODO: get the photo from local file and pass it through as encoded string
             fragment = ProfileFragment.newInstance("string1", "string2", profileData, picture);
             // Insert the fragment by replacing any existing fragment
@@ -260,6 +268,8 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
+            fab.setVisibility(View.VISIBLE);
+
             //fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
             dontKnowWhatThisIsFor = RiderFragment.newInstance("string1", "string2", send_over, uid);
             // Insert the fragment by replacing any existing fragment
@@ -272,6 +282,8 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_driver) {
             System.out.println("handling the driver view!");
+            fab.setVisibility(View.INVISIBLE);
+
             fragment = DriverFragment.newInstance("string1", "string2");
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
@@ -288,6 +300,8 @@ public class HomeActivity extends AppCompatActivity
 
         } else if(id == R.id.nav_payment) {
             System.out.println("handling payment fragment view!");
+            fab.setVisibility(View.INVISIBLE);
+
             fragment = PaymentListFragment.newInstance("string1", "string2");
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();

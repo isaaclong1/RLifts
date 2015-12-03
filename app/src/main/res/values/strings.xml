@@ -66,21 +66,33 @@
     <string name="riderbutton">I want to get a Ride</string>
     <string name="driverbutton">I want to be a Driver</string>
     <string name="paragraph">Open the navigation drawer by pressing the menu icon in the top-left corner.
-        From this menu, you have a few options, described in detail below.\n
-        \u2022Profile: View your profile information.\n
-        \u2022Rider: Opens a list of rides near you that you can request. You can filter the list by.... (to be added)\n
-        \u2022Driver: Allows you to register as a driver and post a ride. Once your ride is posted, riders near you will be able to see it and request your ride.
-        If a rider requests your ride, you\'ll receive a notification and can either
-        accept or decline their request.\n
-        \u2022Add Tokens: Add mile tokens to your account via PayPal, which is the currency used by riders to pay drivers. If you do
-        not have enough tokens, you will not be allowed to request the ride.\n
-        \u2022Ride History: Look at the rides and drivers you have requested in the past.\n
-        \u2022Logout: Logout of your account.\n
-        Thanks for using RLifts! :)
-        \n</string>
+        From this menu, you have a few options, described in detail below.
+        <!-- \u2022Logout: Logout of your account.\n
+        Thanks for using RLifts! :)  -->
+        </string>
+    <string name="text_1">View your profile information.</string>
+    <string name="text_2">Opens a list of rides near you that you can request. </string>
+    <string name="text_3">Allows you post a ride. Once your ride is posted,
+        riders near you will be able to see it and request your ride.
+        If a rider requests your ride, you\'ll receive a notification </string>
+    <string name="text_4">Add mile tokens to your account via PayPal </string>
+    <string name="text_5">Look at the rides and drivers you have requested in the past.</string>
+
+
+
+
     <string-array name="list">
         <item>Edit Profile</item>
         <item>About</item>
+    </string-array>
+
+    <string-array name="list2">
+        <item>Profile</item>
+        <item>Rider</item>
+        <item>Driver</item>
+        <item>Add Token</item>
+        <item>Ride History</item>
+        <item>Logout</item>
     </string-array>
 
 
