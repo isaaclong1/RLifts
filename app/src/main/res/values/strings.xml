@@ -78,6 +78,10 @@
         \u2022Logout: Logout of your account.\n
         Thanks for using RLifts! :)
         \n</string>
+    <string-array name="list">
+        <item>Edit Profile</item>
+        <item>About</item>
+    </string-array>
 
 
 
@@ -88,4 +92,8 @@
 
     <string name="title_activity_driver_registration">DriverRegistration</string>
     <string name="title_activity_paypal">PaypalActivity</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_setting">Setting</string>
+    <string name="title_activity_edit_profile">Edit_profile</string>
+    <string name="title_activity_editprofile">Edit Profile</string>
 </resources>

@@ -2,7 +2,6 @@ package ucr.cs180.rlifts;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.support.v4.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,12 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.Gravity;
-import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,13 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import javax.xml.transform.Result;
-
-
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -154,6 +144,7 @@ public class HomeActivity extends AppCompatActivity
         fragment = Tutorial.newInstance("string1", "string2");
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
     }
 
     @Override
@@ -225,6 +216,24 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, setting.class);
+            Bundle bundle = new Bundle();
+            try {
+
+                bundle.putString("name", profileData.getJSONObject(0).getString("uname"));
+                bundle.putString("lastname", profileData.getJSONObject(0).getString("uname"));
+                bundle.putString("phonenumber", profileData.getJSONObject(0).getString("phone_num"));
+                bundle.putString("birthday", profileData.getJSONObject(0).getString("birthday"));
+                bundle.putString("email", profileData.getJSONObject(0).getString("email"));
+                bundle.putString("first_name", profileData.getJSONObject(0).getString("first_name"));
+                bundle.putString("last_name", profileData.getJSONObject(0).getString("last_name"));
+
+                bundle.putString("UID", uid);
+            }
+            catch (JSONException e) { return false;}
+            intent.putExtras(bundle);
+
+            startActivity(intent);
             return true;
         }
 
