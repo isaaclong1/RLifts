@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 
@@ -63,8 +64,8 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
 
     public static String sendby_id;
     private OnFragmentInteractionListener mListener;
-    public static int driver_id;
-    public static String requester; // jai said this
+    public static Integer driver_id;
+    public static Integer requester;
     public static GoogleMap myMap;
 
     //maps api stuff
@@ -156,7 +157,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         protected  void onProgressUpdate(Wrapper... sweetWrappers){
             myMap.addMarker(new MarkerOptions()
                     .position(sweetWrappers[0].mLineOps.getPoints().get(0))
-                    .title(sweetWrappers[0].driverID + "is headed to: " + sweetWrappers[0].mDestination));
+                    .title(sweetWrappers[0].driverID + " is headed to: " + sweetWrappers[0].mDestination));
 
             Polyline polyline = myMap.addPolyline(sweetWrappers[0].mLineOps);
         }
@@ -222,8 +223,9 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 builder.setPositiveButton("Hell yes!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //this is a bad way to do this but okay...
-                        requester = "Ben (Hardcoded)";
-                        driver_id = arg0.getTitle().charAt(0);
+                        StringTokenizer st = new StringTokenizer(arg0.getTitle());
+                        String driverIDString = st.nextToken(" ");
+                        driver_id = Integer.parseInt(driverIDString);
                         send_message rideMessage = new send_message();
                         rideMessage.execute("Someone wants to take your ride");
                     }
@@ -265,7 +267,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         //received_json = response;
 
         parse_json_for_displaying(response, uid);
-        requester = uid;
+        requester = Integer.parseInt(uid);
 
 
         return fragment;

@@ -1,6 +1,7 @@
 package ucr.cs180.rlifts;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -30,6 +31,7 @@ public class DriverRegistration extends AppCompatActivity {
     private EditText mlicenseplateview;
     private EditText mdriverslicenseview;
     private EditText mstateview;
+    private HomeActivity.MySpinnerDialog waitDialog;
 
     private registerDriver mAuthTask = null;
 
@@ -151,8 +153,9 @@ public class DriverRegistration extends AppCompatActivity {
         else {
             mAuthTask = new registerDriver(car_brand, car_model, car_year, car_color, drivers_license, license_plate, drive_state, DriverRegistration.this);
             mAuthTask.execute((Void) null);
-            Toast.makeText(getApplicationContext(),
-                    "Driver registration complete!", Toast.LENGTH_LONG).show();
+            waitDialog = new HomeActivity.MySpinnerDialog();
+            String tag = "Waiting on registerDriver";
+            waitDialog.show(getSupportFragmentManager(), tag);
         }
     }
 
@@ -264,10 +267,10 @@ public class DriverRegistration extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            Intent intent = new Intent(mActivity, HomeActivity.class);
-            startActivity(intent);
-
+            Toast.makeText(getApplicationContext(),
+                    "Driver registration complete!", Toast.LENGTH_LONG).show();
+            waitDialog.dismiss();
+            finish();
         }
         @Override
         protected void onProgressUpdate(Void... values) {

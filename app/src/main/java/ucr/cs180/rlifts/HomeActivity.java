@@ -1,7 +1,9 @@
 package ucr.cs180.rlifts;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.location.Location;
 import android.support.v4.app.DialogFragment;
 import android.app.FragmentManager;
@@ -60,8 +62,10 @@ public class HomeActivity extends AppCompatActivity
     private static String global_status;
     private JSONArray profileData;
     private JSONArray picture;
-    private static int driver_flag;
+    private static Integer driver_flag;
     final Handler ha = new Handler();
+    private static MySpinnerDialog myInstance;
+    private final Object lock = new Object();
 
 
 
@@ -69,11 +73,11 @@ public class HomeActivity extends AppCompatActivity
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
-            if(driver_flag == 1){
+            if(driver_flag != null && driver_flag == 1){
                 new Get_Driver_Message().execute();
             }
 
-            if (flag == true && driver_flag == 1) {
+            if (flag == true && driver_flag != null && driver_flag == 1) {
                 showAlert();
                 flag = false;
             }
@@ -83,7 +87,7 @@ public class HomeActivity extends AppCompatActivity
     };
     Handler mHandler;
 
-    public void post_ride_click(View view) throws IOException {
+    public void postRideOnClick(View view){
         StartView = (EditText) findViewById(R.id.start);
         DestinationView = (EditText) findViewById(R.id.destination);
         DepartureView = (EditText) findViewById(R.id.leaveTime);
@@ -91,7 +95,13 @@ public class HomeActivity extends AppCompatActivity
         String dest = DestinationView.getText().toString();
         GoogleDistanceRequest gdr = new GoogleDistanceRequest();
 
-        boolean flag = gdr.makeConnection(start, dest, uid);
+        boolean flag = false;
+        try {
+            flag = gdr.makeConnection(start, dest, uid);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (flag) {
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
@@ -104,10 +114,7 @@ public class HomeActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(),"Invalid Address!", Toast.LENGTH_LONG).show();
         }
 
-        new valid_driver().execute();
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {}
+
 
         if(driver_flag == 0 && flag == true)
         {
@@ -274,11 +281,33 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_driver) {
             System.out.println("handling the driver view!");
+            new valid_driver().execute();
+            synchronized (lock) {
+                while (driver_flag == null) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            myInstance = new MySpinnerDialog();
+            myInstance.show(getSupportFragmentManager(), "Waiting on valid_driver");
+
+            if(driver_flag != 1){
+                Intent intent = new Intent(this, DriverRegistration.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("UID", uid);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+
             fragment = DriverFragment.newInstance("string1", "string2");
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             getSupportActionBar().setTitle("Driver");
+
 
         } else if(id == R.id.logout){
             Intent intent = new Intent(this, LoginActivity.class);
@@ -512,9 +541,10 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    private class valid_driver extends AsyncTask<String, Void, Void> {
+    public class valid_driver extends AsyncTask<String,Void,Boolean> {
+        int driver_status;
         @Override
-        protected Void doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             try {
                 NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
 
@@ -541,24 +571,48 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
 
-                int driver_status = response.getJSONObject(0).getInt("driverStatus");
-                driver_flag = driver_status;
+                driver_status = response.getJSONObject(0).getInt("driverStatus");
+
 
 
             } catch (Exception e) { // for now all exceptions will return false
                 System.out.println("Debug in background task:\n" + e.getMessage());
-                //return false;
+                return false;
             }
-            return null;
-        }
-        @Override
-        protected void onPreExecute() {
+            driver_flag = driver_status;
+            synchronized (lock) {
+                lock.notify();
+            }
+            return true;
         }
 
         @Override
         protected void onProgressUpdate(Void... values) {
+
         }
 
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            myInstance.dismiss();
+        }
+
+    }
+
+    public static class MySpinnerDialog extends DialogFragment {
+
+        public MySpinnerDialog() {
+            // use empty constructors. If something is needed use onCreate's
+        }
+
+        @Override
+        public Dialog onCreateDialog(final Bundle savedInstanceState) {
+
+            Dialog _dialog = new ProgressDialog(getActivity());
+            this.setStyle(STYLE_NO_TITLE, getTheme()); // You can use styles or inflate a view
+            _dialog.setCancelable(false);
+
+            return _dialog;
+        }
     }
 
 

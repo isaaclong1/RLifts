@@ -52,22 +52,25 @@ import com.google.maps.model.Unit;
 
 public class GoogleDistanceRequest{
     public String passed_uid;
-    public boolean status;
+    public Boolean status = null;
     public JSONObject response;
+    private HomeActivity.MySpinnerDialog waitOnGDR;
+    private Object lock;
     public GoogleDistanceRequest(){
 
     }
 
-    public boolean makeConnection(String start, String destination, String uid) {
+    public boolean makeConnection(String start, String destination, String uid) throws InterruptedException {
         passed_uid = uid;
         Start[0] = start;
         Dest[0] = destination;
         
         new LongOperation().execute();
-        try{
-            Thread.sleep(1000);
-        }catch(Exception e){
-            System.out.println("Well damn...");
+        lock = new Object();
+        synchronized (lock) {
+            while (status == null) {
+                lock.wait();
+            }
         }
         System.out.println("The status flag is: " + status);
         return status;
@@ -131,7 +134,9 @@ public class GoogleDistanceRequest{
 
             boolean result = db_addRide(db_pickup, db_destination, db_duration, db_distance, db_costFinal, pickupCoordinates, destinationCoordinates);
             status = true;
-
+            synchronized (lock) {
+                lock.notify();
+            }
             return "Executed";
         }
 
@@ -219,6 +224,7 @@ public class GoogleDistanceRequest{
         protected void onPostExecute(String result) {
             // might want to change "executed" for the returned string passed
             // into onPostExecute() but that is upto you
+
         }
 
         @Override

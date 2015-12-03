@@ -43,7 +43,7 @@
         android:layout_marginTop="62dp"
         android:layout_below="@+id/destination"
         android:layout_centerHorizontal="true"
-        android:onClick="post_ride_click"/>
+        android:onClick="postRideOnClick"/>
     </LinearLayout>
     </ScrollView>
 </RelativeLayout>
