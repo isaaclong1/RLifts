@@ -6,6 +6,7 @@
 
 
     <!-- Change strings so that we have 2 seperate buttons for login and register -->
+    <string name="prompt_random_string">Enter Completion Code from Rider</string>
     <string name="state">State</string>
     <string name="leave_time">Departure Time</string>
     <string name="Car_brand">Car Brand</string>
@@ -87,4 +88,5 @@
 
     <string name="title_activity_driver_registration">DriverRegistration</string>
     <string name="title_activity_paypal">PaypalActivity</string>
+    <string name="title_activity_driving_in_progress">DrivingInProgress</string>
 </resources>

@@ -200,31 +200,32 @@ public class HomeActivity extends AppCompatActivity
         builder.setTitle ("NOTIFICATION");
         builder.show();
     }
-
+    boolean ride_taken = true;
     public void showAlert ()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("YOUR ROUTE HAS BEEN SELECTED, DO YOU WANT TO TAKE THIS RIDE?").create();
+        builder.setMessage("YOUR ROUTE HAS BEEN SELECTED, DO YOU WANT TO TAKE THIS RIDE?\nPick up location is: ").create();
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
             {
-                //run_showalert = false;
-                //new set_alert().execute();
                 dialog.dismiss();
+
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // no button
             {
-                //run_showalert = false;
-                //new set_alert().execute();
                 dialog.dismiss();
+                ride_taken = false;
             }
         });
-        builder.setTitle ("NOTIFICATION");
+        builder.setTitle("NOTIFICATION");
         builder.show();
+        if(ride_taken) {
+
+        }
     }
 
     @Override

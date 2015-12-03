@@ -40,13 +40,16 @@ import com.google.maps.android.PolyUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.lang.Object;
 
 
 
@@ -146,8 +149,6 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                     e.printStackTrace();
                 }
 
-
-
             }
             return "LOL";
         }
@@ -240,12 +241,23 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
+        String generateString = randomString();
         myMap = map;
 
         new RouteGenerator().execute();
+    }
 
-
-
+    public static String randomString() {
+        int length = 10;
+        char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        Random random = new SecureRandom();
+        char[] result = new char[length];
+        for (int i = 0; i < result.length; i++) {
+            // picks a random index out of character set > random character
+            int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
+            result[i] = CHARSET_AZ_09[randomCharIndex];
+        }
+        return new String(result);
     }
 
     // TODO: Rename and change types and number of parameters

@@ -45,11 +45,14 @@ public class DriverRegistration extends AppCompatActivity {
     private EditText mdriverslicenseview;
     private EditText mstateview;
 
+    public boolean driver_status;
+
     private registerDriver mAuthTask = null;
 
     private DriverRegistration mActivity;
 
     private static String uid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,8 +168,6 @@ public class DriverRegistration extends AppCompatActivity {
         else {
             mAuthTask = new registerDriver(car_brand, car_model, car_year, car_color, drivers_license, license_plate, drive_state, DriverRegistration.this);
             mAuthTask.execute((Void) null);
-            Toast.makeText(getApplicationContext(),
-                    "Driver registration complete!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -342,35 +343,37 @@ public class DriverRegistration extends AppCompatActivity {
                         System.out.println("doing check: ");
                         if (response.getJSONObject(i).get("status").equals("ok")) {
                             System.out.println("Successfully received confirmation from server for register driver.");
-                            return true;
+                            driver_status = true;
+                            //return true;
                         }
                         else {
+                            //we have an error
+                            driver_status = false;
 
                         }
                     }
                 }
-                // updating the driver mode after registration
+                if(driver_status) {
+                    JSONObject data2 = new JSONObject();
+                    data2.put("DriverModeOn", "");
+                    data2.put("UID", uid);
 
-                JSONObject data2 = new JSONObject();
-                data2.put("DriverModeOn", "");
-                data2.put("UID", uid);
+                    JSONArray cred2 = new JSONArray();
+                    cred2.put(data2);
+                    System.out.println("IN HERE YO" + uid);
+                    networkRequest.send("../cgi-bin/jadd.py", "POST", cred2);
+                    JSONArray response2 = networkRequest.getResponse();
 
-                JSONArray cred2 = new JSONArray();
-                cred2.put(data2);
-                System.out.println("Before changing driver flag: " + cred2);
-
-                networkRequest.send("../cgi-bin/jadd.py", "POST", cred2);
-                JSONArray response2 = networkRequest.getResponse();
-
-                if (response2 != null) {
-                    for (int i = 0; i < response2.length(); i++) {
-                        System.out.println("doing check: ");
-                        if (response2.getJSONObject(i).get("status").equals("ok")) {
-                            System.out.println("Successfully received confirmation from server for changing driver flag mode.");
-                            return true;
-                        }
-                        else {
-
+                    if (response2 != null) {
+                        for (int i = 0; i < response2.length(); i++) {
+                            System.out.println("doing check: ");
+                            if (response2.getJSONObject(i).get("status").equals("ok")) {
+                                System.out.println("Successfully received confirmation from server for changing driver flag mode.");
+                                return true;
+                            } else {
+                                // we have an error
+                                driver_status = false;
+                            }
                         }
                     }
                 }
@@ -386,8 +389,15 @@ public class DriverRegistration extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            Intent intent = new Intent(mActivity, HomeActivity.class);
-            startActivity(intent);
+            if(driver_status) {
+                Toast.makeText(getApplicationContext(), "Driver registration complete!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(mActivity, HomeActivity.class);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getApplicationContext(),
+                        "Car has been registered! Try again.", Toast.LENGTH_LONG).show();
+            }
 
         }
         @Override
