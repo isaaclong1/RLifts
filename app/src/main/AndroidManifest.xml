@@ -34,12 +34,15 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAw4-hFkaJFAcVQiz6-Muka5MtU7nU9FAI" />
+            android:value="AIzaSyAw4-hFkaJFAcVQiz6-Muka5MtU7nU9FAI"/>
+
 
         <activity
             android:name=".LoginActivity"
@@ -98,18 +101,33 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
-        <service
-            android:name="com.paypal.android.sdk.payments.PayPalService"
+        <service android:name="com.paypal.android.sdk.payments.PayPalService"
             android:exported="false" />
 
         <activity android:name="com.paypal.android.sdk.payments.PaymentActivity" />
         <activity android:name="com.paypal.android.sdk.payments.LoginActivity" />
         <activity android:name="com.paypal.android.sdk.payments.PaymentMethodActivity" />
         <activity android:name="com.paypal.android.sdk.payments.PaymentConfirmActivity" />
-        <activity
-            android:name="io.card.payment.CardIOActivity"
+        <activity android:name="io.card.payment.CardIOActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity android:name="io.card.payment.DataEntryActivity" />
+
+        <activity
+            android:name=".setting"
+            android:label="@string/title_activity_setting"
+            android:parentActivityName=".HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucr.cs180.rlifts.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".editprofile"
+            android:label="@string/title_activity_editprofile"
+            android:parentActivityName=".HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucr.cs180.rlifts.HomeActivity" />
+        </activity>
         <activity
             android:name=".DropOffRider"
             android:label="@string/title_activity_drop_off_rider"

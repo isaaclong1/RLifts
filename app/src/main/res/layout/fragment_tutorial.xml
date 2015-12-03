@@ -1,55 +1,146 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="ucr.cs180.rlifts.Tutorial">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        tools:context="ucr.cs180.rlifts.FirstRideorDrive">
-
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+       <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/linearLayout"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:descendantFocusability="blocksDescendants"
+            >
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:editable="false"
                 android:text="@string/welcome_text"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+
                 android:textStyle="bold"
-                android:textSize="50dp"
+                android:textSize="50sp"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:editable="false"
-                android:text="@string/paragraph"
-                android:textSize="18dp"
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:text="@string/paragraph"
+                   android:textSize="18sp"
+                   />
 
-                />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile:    "
+            android:textSize="20sp"/>
+           <TextView
+               android:id="@+id/text_profile"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/text_1"
+               android:textSize="20sp"
+               />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rider:       "
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/text_rider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_2"
+            android:textSize="20sp"
+            />
+
+    </LinearLayout>
 
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Driver:      "
+            android:textSize="20sp"/>
+           <TextView
+               android:id="@+id/text_driver"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/text_3"
+               android:textSize="20sp"
+               />
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tokens:   "
+            android:textSize="20sp"/>
+           <TextView
+               android:id="@+id/text_add_token"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/text_4"
+               android:textSize="20sp"
+               />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ride History:  "
+            android:textSize="20sp"/>
+           <TextView
+               android:id="@+id/text_ride_history"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/text_5"
+               android:textSize="20sp"
+               />
         </LinearLayout>
 
 
 
-    </ScrollView>
-    </RelativeLayout>
+           <!-- <ListView
+                android:id="@+id/listView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/list2"
 
+                >
+            </ListView> -->
 
+        </LinearLayout>
+</ScrollView>
 </FrameLayout>

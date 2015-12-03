@@ -14,9 +14,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.Gravity;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -39,9 +36,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import javax.xml.transform.Result;
 
-
-
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -64,6 +60,7 @@ public class HomeActivity extends AppCompatActivity
     private JSONArray picture;
     private static Integer driver_flag;
     final Handler ha = new Handler();
+    FloatingActionButton fab;
     private static MySpinnerDialog myInstance;
     private final Object lock = new Object();
 
@@ -134,8 +131,11 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Home");
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,7 +143,7 @@ public class HomeActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-        */
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -247,6 +247,24 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, setting.class);
+            Bundle bundle = new Bundle();
+            try {
+
+                bundle.putString("name", profileData.getJSONObject(0).getString("uname"));
+                bundle.putString("lastname", profileData.getJSONObject(0).getString("uname"));
+                bundle.putString("phonenumber", profileData.getJSONObject(0).getString("phone_num"));
+                bundle.putString("birthday", profileData.getJSONObject(0).getString("birthday"));
+                bundle.putString("email", profileData.getJSONObject(0).getString("email"));
+                bundle.putString("first_name", profileData.getJSONObject(0).getString("first_name"));
+                bundle.putString("last_name", profileData.getJSONObject(0).getString("last_name"));
+
+                bundle.putString("UID", uid);
+            }
+            catch (JSONException e) { return false;}
+            intent.putExtras(bundle);
+
+            startActivity(intent);
             return true;
         }
 
@@ -264,6 +282,8 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             System.out.println("handling the profile view!");
+            fab.setVisibility(View.INVISIBLE);
+
             // TODO: get the photo from local file and pass it through as encoded string
             fragment = ProfileFragment.newInstance("string1", "string2", profileData, picture);
             // Insert the fragment by replacing any existing fragment
@@ -273,6 +293,8 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
+            fab.setVisibility(View.VISIBLE);
+
             //fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
             riderMapFragment = riderMapFragment.newInstance(riderMapFragment,"string1", "string2", send_over, uid);
             // Insert the fragment by replacing any existing fragment
@@ -306,12 +328,13 @@ public class HomeActivity extends AppCompatActivity
                 startActivity(intent);
             }
 
+            fab.setVisibility(View.INVISIBLE);
+
             fragment = DriverFragment.newInstance("string1", "string2");
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             getSupportActionBar().setTitle("Driver");
-
 
         } else if(id == R.id.logout){
             Intent intent = new Intent(this, LoginActivity.class);
@@ -323,6 +346,8 @@ public class HomeActivity extends AppCompatActivity
 
         } else if(id == R.id.nav_payment) {
             System.out.println("handling payment fragment view!");
+            fab.setVisibility(View.INVISIBLE);
+
             fragment = PaymentListFragment.newInstance("string1", "string2");
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -589,7 +614,6 @@ public class HomeActivity extends AppCompatActivity
             }
             return true;
         }
-
         @Override
         protected void onProgressUpdate(Void... values) {
 
