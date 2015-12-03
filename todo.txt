@@ -1,30 +1,27 @@
-Bug Fix (Isaac)
--on create user capture UID/UID register crashing issue
--During post ride check for valid return from google api, if invalid let them know and don’t post ride/error
+Bug Fix/minor improvements (All)
+-Calculate age from birthday when user registers
 
-Home Page (Albert)
--tutorial text for side menu, have this open by default
+Home Screen Tutorial (Albert)
+-Improvements to the look of the tutorial
+-Change info on profile page
 
 Driver Fragment (Terry & Jai)
--check if user is registered driver, if not make them register (will have to be new activity for registering as driver)
--create drivers table in db
--After they have registered, display option to post ride
--In post ride capture starting location as long an lat with google API call
--Add field for leave time for driver
-
-Notification system (Isaac & Terry & Jai)
--Once the driver has confirmed the rider:
-    -Give driver the address of the rider as pop up
-    -Give rider unique confirmation string as pop up
+-Implement way to receive “ride complete” string 
 
 Rider Fragment (Ben & Don)
--new activity/fragment to capture starting and ending location 
 -Clean up/implement the initial filtered list fragment that only filters on a certain longitude and latitude range 
 -Add additional filter options (by destination/best fit, by leave time)
--Add pop up for select ride confirmation
+-Implement way for riders to select a ride on screen
+-Add pop up for select ride confirmation (e.g. are you sure you want this ride)
+-Generate random “ride complete” string to verify on Drivers app once ride completes
 
 Payment (Isaac)
--Adding paypal to pay for tokens as another fragment in side menu
--Add token count to user table
+-Link token menu logically to paypal (currently hardcoded)
+-Riders who do not have enough tokens are prevented from taking a ride
+-Tokens should be displayed in profile
 -Upon string confirmation at end of ride, token transfer happens
+
+ALL DUE DECEMBER 4th MIDNIGHT
+
+
 

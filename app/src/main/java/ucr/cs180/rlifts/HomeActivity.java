@@ -2,6 +2,7 @@ package ucr.cs180.rlifts;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.location.Location;
 import android.support.v4.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
@@ -28,6 +29,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+
 import javax.xml.transform.Result;
 
 
@@ -55,6 +62,10 @@ public class HomeActivity extends AppCompatActivity
     private JSONArray picture;
     private static int driver_flag;
     final Handler ha = new Handler();
+
+
+
+
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
@@ -238,7 +249,7 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         Fragment fragment = null;
-        RiderFragment dontKnowWhatThisIsFor = null;
+        RiderFragment riderMapFragment = new RiderFragment(); // All fragments should be initialized this way
 
         if (id == R.id.nav_profile) {
             System.out.println("handling the profile view!");
@@ -252,11 +263,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
             //fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
-            dontKnowWhatThisIsFor = RiderFragment.newInstance("string1", "string2", send_over, uid);
+            riderMapFragment = riderMapFragment.newInstance(riderMapFragment,"string1", "string2", send_over, uid);
             // Insert the fragment by replacing any existing fragment
             new Get_Rides().execute();
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, dontKnowWhatThisIsFor).commit();
+            fragmentManager.beginTransaction().replace(R.id.flContent, riderMapFragment).commit();
             new Get_Rides().execute();
             getSupportActionBar().setTitle("Rider");
 
@@ -549,6 +560,8 @@ public class HomeActivity extends AppCompatActivity
         }
 
     }
+
+
 }
 
 

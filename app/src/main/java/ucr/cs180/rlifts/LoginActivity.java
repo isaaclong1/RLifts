@@ -485,7 +485,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     public class FacebookLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private LoginActivity mActivity;
