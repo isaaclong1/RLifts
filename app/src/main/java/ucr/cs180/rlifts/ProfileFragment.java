@@ -137,33 +137,8 @@ public class ProfileFragment extends Fragment {
             age = getArguments().getString("ARG_AGE", "");
             // TODO: set the global photo argument here
             encodedPhoto = getArguments().getString("ARG_PIC", "");
-
-            //mProfileData = getArguments().get
         }
 
-        //TextView uname = (TextView) getView().findViewById(R.id.uname);
-        //uname.setText("BLAH BLAH BLAH"); // should be done using android resources, ideally
-
-        // trying doing the network call here for profile information and display it
-        /*
-        NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
-        JSONObject data = new JSONObject();
-        try {
-            data.put("Users", "Users");
-            data.put("queryType", "profileData");
-            data.put("data", mParam1);
-
-        } catch (Exception e) {
-            System.out.println("Error in profile network request!" + e.getMessage());
-        }
-
-        JSONArray cred = new JSONArray();
-        cred.put(data);
-
-        networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
-        JSONArray response = networkRequest.getResponse();
-        System.out.print(response);
-        */
     }
 
     @Override
