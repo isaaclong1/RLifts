@@ -211,7 +211,7 @@ public class HomeActivity extends AppCompatActivity
     public void showAlert ()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("YOUR ROUTE HAS BEEN SELECTED, DO YOU WANT TO TAKE THIS RIDE?\nPick up location is: ").create();
+        builder.setMessage("YOUR ROUTE HAS BEEN SELECTED, DO YOU WANT TO PICK UP THIS PASSENGER?").create(); // maybe send basic profile information with it?
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
@@ -231,6 +231,9 @@ public class HomeActivity extends AppCompatActivity
         builder.setTitle("NOTIFICATION");
         builder.show();
         if(ride_taken) {
+            //take them to page to input the random string once that happens tokens will transfer over.
+            Intent intent = new Intent(this, DropOffRider.class);
+            startActivity(intent);
 
         }
     }

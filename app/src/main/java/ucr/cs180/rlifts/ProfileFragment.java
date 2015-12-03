@@ -49,6 +49,7 @@ public class ProfileFragment extends Fragment {
     private String phone;
     private String age;
     private String encodedPhoto;
+    private String tokens;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,6 +75,8 @@ public class ProfileFragment extends Fragment {
             System.out.println("Exception in parse profile response call" + e.getMessage());
         }
 
+        System.out.println("Size of data: " + data.size());
+
         for(int i = 0; i < data.size(); i++) {
             System.out.println(data.get(i));
         }
@@ -84,6 +87,7 @@ public class ProfileFragment extends Fragment {
         args.putString("ARG_BIRTHDAY", data.get(3));
         args.putString("ARG_PHONE", data.get(4));
         args.putString("ARG_AGE", data.get(5));
+        args.putString("ARG_TOK", data.get(6));
 
         // somehow get response into args, and in on create do the display
         fragment.setArguments(args);
@@ -109,6 +113,7 @@ public class ProfileFragment extends Fragment {
         dataStrings.add(data.getString("birthday"));
         dataStrings.add(data.getString("phone_num"));
         dataStrings.add(data.getString("age"));
+        dataStrings.add(data.getString("token"));
 
         System.out.println(dataStrings);
         return dataStrings;
@@ -135,6 +140,7 @@ public class ProfileFragment extends Fragment {
             bday = getArguments().getString("ARG_BIRTHDAY", "");
             phone = getArguments().getString("ARG_PHONE", "");
             age = getArguments().getString("ARG_AGE", "");
+            tokens = getArguments().getString("ARG_TOK", "");
             // TODO: set the global photo argument here
             encodedPhoto = getArguments().getString("ARG_PIC", "");
         }
@@ -152,12 +158,14 @@ public class ProfileFragment extends Fragment {
         TextView bdayText = (TextView)base.findViewById(R.id.birthday);
         TextView phoneText = (TextView)base.findViewById(R.id.phone_num);
         TextView ageText = (TextView)base.findViewById(R.id.age);
+        TextView tokenText = (TextView)base.findViewById(R.id.tokens);
         unameText.setText(uname);
         emailText.setText(email);
         nickText.setText(nick);
         bdayText.setText(bday);
         phoneText.setText(phone);
         ageText.setText(age);
+        tokenText.setText(tokens);
 
         // TODO: decode the image and display it here
         // follow the stack overflow: byte[] gets decode, and bitmap gets string, then bitmap goes
@@ -172,6 +180,7 @@ public class ProfileFragment extends Fragment {
         bdayText.setText("Birthday : " + bday);
         phoneText.setText("Phone Number: " + phone);
         ageText.setText("Age: " + age);
+        tokenText.setText("Ride Tokens: " + tokens);
 
         return base;
     }

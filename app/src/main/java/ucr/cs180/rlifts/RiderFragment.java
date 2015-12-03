@@ -70,6 +70,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
     public static Integer driver_id;
     public static Integer requester;
     public static GoogleMap myMap;
+    public boolean ride_taken;
 
     //maps api stuff
     private GoogleApiClient mGoogleApiClient;
@@ -229,10 +230,12 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                         driver_id = Integer.parseInt(driverIDString);
                         send_message rideMessage = new send_message();
                         rideMessage.execute("Someone wants to take your ride");
+                        ride_taken = true;
                     }
                 });
                 builder.setNegativeButton("Fuck no!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        ride_taken = false;
                         // User cancelled the dialog
                     }
                 });
@@ -242,8 +245,20 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 dialog.show();
             }
         });
-
-        String generateString = randomString();
+        if(ride_taken){
+            String generateString = randomString();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Here is your ride completion code. Please give this to your driver when you are dropped off. " + generateString).create();
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) // yes buton
+                {
+                    dialog.dismiss();
+                }
+            });
+            builder.setTitle ("NOTIFICATION");
+            builder.show();
+        }
         myMap = map;
 
         new RouteGenerator().execute();

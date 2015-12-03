@@ -110,6 +110,15 @@
             android:name="io.card.payment.CardIOActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity android:name="io.card.payment.DataEntryActivity" />
+        <activity
+            android:name=".DropOffRider"
+            android:label="@string/title_activity_drop_off_rider"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucr.cs180.rlifts.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

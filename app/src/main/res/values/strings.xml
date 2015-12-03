@@ -89,4 +89,6 @@
     <string name="title_activity_driver_registration">DriverRegistration</string>
     <string name="title_activity_paypal">PaypalActivity</string>
     <string name="title_activity_driving_in_progress">DrivingInProgress</string>
+    <string name="title_activity_drop_off_rider">DropOffRider</string>
+    <string name="title_activity_filter">FilterActivity</string>
 </resources>
