@@ -23,9 +23,46 @@
         android:layout_width="wrap_content" android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_home" app:menu="@menu/activity_home_drawer" />
-    <android.support.design.widget.NavigationView android:id="@+id/filter_options"
+    <!--<android.support.design.widget.NavigationView android:id="@+id/filter_options"
         android:layout_width="wrap_content" android:layout_height="match_parent"
         android:layout_gravity="end"
-        app:headerLayout="@layout/nav_header_home" app:menu="@menu/rider_fragment_filter_drawer" />
+        app:headerLayout="@layout/nav_header_home" app:menu="@menu/rider_fragment_filter_drawer" /> -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/filter_options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:background="#FFFFFF">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rider_filter_header"
+            android:clickable="false"
+            android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+            android:textSize="17dp"
+            android:textColor="#000000"/>
+        <ExpandableListView
+            android:id="@+id/filter_exp_list"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rider_filter_leave_time"
+            android:clickable="true"
+            android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+            android:textSize="17dp"
+            android:textColor="#000000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rider_filter_cost"
+            android:clickable="true"
+            android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+            android:textSize="17dp"
+            android:textColor="#000000"/>
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

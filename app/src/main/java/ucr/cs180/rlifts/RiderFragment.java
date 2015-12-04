@@ -79,6 +79,8 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
     private Location mLatitudeText;
     private LatLng lastKnownLocation;
 
+    private List<LineWrapper> theWholeShebang = new ArrayList<>();
+
 
 
     /**
@@ -96,6 +98,22 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
 
 
     public static LatLng lastLoc;
+
+    private class LineWrapper{
+        public LatLng strtCoord;
+        public Polyline aLine;
+        public Marker aMarker;
+        public PolylineOptions aLineOps;
+        public MarkerOptions aMarkerOps;
+
+        public LineWrapper(LatLng coord, Polyline ln, PolylineOptions lnOps, Marker markieMark, MarkerOptions markieMarkOps){
+            strtCoord = coord;
+            aLine = ln;
+            aLineOps = lnOps;
+            aMarker = markieMark; //it's 4:34am
+            aMarkerOps = markieMarkOps;
+        }
+    }
 
     private class RouteGenerator extends AsyncTask<GoogleMap, Wrapper, String>{
 
@@ -158,11 +176,17 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
 
         @Override
         protected  void onProgressUpdate(Wrapper... sweetWrappers){
-            myMap.addMarker(new MarkerOptions()
-                    .position(sweetWrappers[0].mLineOps.getPoints().get(0))
-                    .title(sweetWrappers[0].driverID + " is headed to: " + sweetWrappers[0].mDestination));
+            MarkerOptions mmmmMarkOps = new MarkerOptions()
+                                            .position(sweetWrappers[0].mLineOps.getPoints().get(0))
+                                            .title(sweetWrappers[0].driverID + " is headed to: " + sweetWrappers[0].mDestination);
+            Marker mmmmMark = myMap.addMarker(mmmmMarkOps);
+
+            //potential data race if a filter happens before these are calculated
+
 
             Polyline polyline = myMap.addPolyline(sweetWrappers[0].mLineOps);
+            LineWrapper lWrap = new LineWrapper(sweetWrappers[0].mLineOps.getPoints().get(0), polyline, sweetWrappers[0].mLineOps, mmmmMark, mmmmMarkOps );
+            theWholeShebang.add(lWrap);
         }
 
         @Override
@@ -411,6 +435,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 data.put("sentTo", driver_id);
                 data.put("mtext", "My message");
                 data.put("status", 0);
+                data.put("type", "driver");
                 //data.put("notification_check", 0);
 
                 JSONArray cred = new JSONArray();
@@ -491,5 +516,17 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         // More about this in the 'Handle Connection Failures' section.
     }
 
+    public void filterDistance(int dist){
+        DistanceCalculator distanceCalculator = new DistanceCalculator();
+        Double lat2 = mLastLocation.getLatitude();
+        Double lon2 = mLastLocation.getLongitude();
+        myMap.clear();
+        for(int i = 0; i < theWholeShebang.size(); i++){
+            if(distanceCalculator.distance(theWholeShebang.get(i).strtCoord.latitude,theWholeShebang.get(i).strtCoord.longitude, lat2, lon2, "M") <= dist){
+                myMap.addMarker(theWholeShebang.get(i).aMarkerOps);
+                myMap.addPolyline(theWholeShebang.get(i).aLineOps);
+            }
+        }
 
+    }
 }
