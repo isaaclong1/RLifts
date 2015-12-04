@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener,
@@ -51,9 +53,12 @@ public class HomeActivity extends AppCompatActivity
     private EditText DestinationView;
     private EditText DepartureView;
     private static String uid;
+    private static String rider_id;
     private JSONArray send_over;
-    private static boolean flag = false;
+
+    private static Boolean flag = false;
     private static boolean run_showalert = true;
+    private static Boolean rider_flag = false;
     private static String m_id;
     private static String global_status;
     private JSONArray profileData;
@@ -65,24 +70,38 @@ public class HomeActivity extends AppCompatActivity
     private final Object lock = new Object();
 
 
-
-
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
-            if(driver_flag != null && driver_flag == 1){
                 new Get_Driver_Message().execute();
-            }
+
 
             if (flag == true && driver_flag != null && driver_flag == 1) {
                 showAlert();
                 flag = false;
+            }
+            if(rider_flag == true) {
+                showRiderMessage();
+                rider_flag = false;
             }
 
             ha.postDelayed(this,1000);
         }
     };
     Handler mHandler;
+
+    public String randomString() {
+        int length = 10;
+        char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        Random random = new SecureRandom();
+        char[] result = new char[length];
+        for (int i = 0; i < result.length; i++) {
+            // picks a random index out of character set > random character
+            int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
+            result[i] = CHARSET_AZ_09[randomCharIndex];
+        }
+        return new String(result);
+    }
 
     public void postRideOnClick(View view){
         StartView = (EditText) findViewById(R.id.start);
@@ -112,7 +131,6 @@ public class HomeActivity extends AppCompatActivity
         }
 
 
-
         if(driver_flag == 0 && flag == true)
         {
             Intent intent = new Intent(this, DriverRegistration.class);
@@ -131,16 +149,13 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Home");
 
-
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
             }
         });
 
@@ -197,7 +212,7 @@ public class HomeActivity extends AppCompatActivity
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Your ride has been posted. Please wait for someone to select your ride").create();
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
             {
@@ -208,6 +223,7 @@ public class HomeActivity extends AppCompatActivity
         builder.show();
     }
     boolean ride_taken = true;
+    boolean start_intent = false;
     public void showAlert ()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -216,8 +232,12 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
             {
+                start_intent = true;
+                new send_message().execute();
+                synchronized (lock) {
+                    lock.notify();
+                }
                 dialog.dismiss();
-
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -230,12 +250,35 @@ public class HomeActivity extends AppCompatActivity
         });
         builder.setTitle("NOTIFICATION");
         builder.show();
-        if(ride_taken) {
-            //take them to page to input the random string once that happens tokens will transfer over.
-            Intent intent = new Intent(this, DropOffRider.class);
-            startActivity(intent);
-
+        /*if(ride_taken) {
+            synchronized (lock) {
+                while (rider_flag  == null || flag == null) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }*/
+            if(start_intent) {
+                System.out.println("Inside start intent");
+                Intent intent = new Intent(this, DropOffRider.class);
+                startActivity(intent);
+            }
         }
+
+    public void showRiderMessage(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your driver has accepted your ride. Here is your ride completion code: " + randomString() + ". Please give this to your driver upon ride completion").create();
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) // yes buton
+            {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("NOTIFICATION");
+        builder.show();
     }
 
     @Override
@@ -409,11 +452,14 @@ public class HomeActivity extends AppCompatActivity
                 //parsing response
                 String message_id = "";
                 String status="";
+                String message_to="";
                 JSONArray rideList = response.getJSONObject(0).getJSONArray("messages");
                 for(int i = 0; i < rideList.length(); i++){
                     JSONObject ride = rideList.getJSONObject(i);
                     message_id = ride.getString("MID");
                     status = ride.getString("status");
+                    message_to = ride.getString("type");
+                    rider_id = ride.getString("sentBy");
                     m_id = message_id;
                     global_status = status;
                 }
@@ -432,10 +478,17 @@ public class HomeActivity extends AppCompatActivity
 
                 for (int i = 0; i < response.length(); i++) {
                     if (response.getJSONObject(i).get("status").equals("ok")) {
-                        System.out.println("Successfully received confirmation from server for getting rides.");
+                        System.out.println("Successfully received confirmation from server for getting messages.");
                         //return true;
-                        System.out.println("OVER HERE");
-                        flag = true;
+                        System.out.println("MESSAGE TO: " + message_to);
+                        if(message_to.equals("driver")){
+                            System.out.println("Inside here");
+                            flag = true;
+                        }
+                        if(message_to.equals("rider")){
+                            System.out.println("Setting rider flag");
+                            rider_flag = true;
+                        }
                     }
                 }
 
@@ -642,7 +695,52 @@ public class HomeActivity extends AppCompatActivity
             return _dialog;
         }
     }
+    private class send_message extends AsyncTask<String, Void, Void> {
 
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Messages", "Messages");
+                data.put("sentBy", uid);
+                data.put("sentTo", rider_id);
+                data.put("mtext", "My message");
+                data.put("status", 0);
+                data.put("type", "rider");
+                //data.put("notification_check", 0);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+
+                networkRequest.send("../cgi-bin/db-add.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
 
 }
 

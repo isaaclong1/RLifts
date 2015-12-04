@@ -112,4 +112,6 @@
     <string name="title_activity_driving_in_progress">DrivingInProgress</string>
     <string name="title_activity_drop_off_rider">DropOffRider</string>
     <string name="title_activity_filter">FilterActivity</string>
+    <string name="title_activity_filters">Filters</string>
+    <string name="title_activity_wait_for_driver_response">WaitForDriverResponse</string>
 </resources>

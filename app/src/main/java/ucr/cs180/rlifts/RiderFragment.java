@@ -3,12 +3,14 @@ package ucr.cs180.rlifts;
 //import android.app.Fragment;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -79,7 +81,6 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
     private LatLng lastKnownLocation;
 
 
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -95,6 +96,8 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
 
 
     public static LatLng lastLoc;
+
+
 
     private class RouteGenerator extends AsyncTask<GoogleMap, Wrapper, String>{
 
@@ -222,7 +225,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                         .setTitle("Would you like to take this ride?");
 
                 // 2a. Add the buttons
-                builder.setPositiveButton("Hell yes!", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //this is a bad way to do this but okay...
                         StringTokenizer st = new StringTokenizer(arg0.getTitle());
@@ -231,9 +234,12 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                         send_message rideMessage = new send_message();
                         rideMessage.execute("Someone wants to take your ride");
                         ride_taken = true;
+                        HomeActivity activity = (HomeActivity) getActivity();
+                        //activity.set_rider_id(requester.toString());
+
                     }
                 });
-                builder.setNegativeButton("Fuck no!", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         ride_taken = false;
                         // User cancelled the dialog
@@ -245,8 +251,9 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 dialog.show();
             }
         });
-        if(ride_taken){
-            String generateString = randomString();
+        //Intent intent = new Intent(getActivity(), WaitForDriverResponse.class);
+        //startActivity(intent);
+            /*String generateString = randomString();
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Here is your ride completion code. Please give this to your driver when you are dropped off. " + generateString).create();
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
@@ -257,8 +264,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 }
             });
             builder.setTitle ("NOTIFICATION");
-            builder.show();
-        }
+            builder.show(); */
         myMap = map;
 
         new RouteGenerator().execute();
@@ -423,6 +429,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 data.put("sentTo", driver_id);
                 data.put("mtext", "My message");
                 data.put("status", 0);
+                data.put("type", "driver");
                 //data.put("notification_check", 0);
 
                 JSONArray cred = new JSONArray();
@@ -502,6 +509,4 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         //
         // More about this in the 'Handle Connection Failures' section.
     }
-
-
 }

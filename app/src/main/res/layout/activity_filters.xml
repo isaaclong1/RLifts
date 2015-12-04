@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context="ucr.cs180.rlifts.Filters">
+    tools:context="ucr.cs180.rlifts.Filters"
+    android:background="#263238">
 
     <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
@@ -12,6 +13,71 @@
         <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
             android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <EditText android:id="@+id/FilterMi" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Filter by miles"
+            android:imeActionId="@+id/FilterMi"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionUnspecified" android:inputType="textPassword"
+            android:maxLines="1" android:singleLine="true"
+            android:textColor="#F5F5F5"
+            android:textColorHint="#F5F5F5" />
+
+
+
+    <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText android:id="@+id/FilterStart" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Filter by start location"
+            android:imeActionId="@+id/FilterMi"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionUnspecified" android:inputType="textPassword"
+            android:maxLines="1" android:singleLine="true"
+            android:textColor="#F5F5F5"
+            android:textColorHint="#F5F5F5" />
+    </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <EditText android:id="@+id/FilterDest" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Filter by destination"
+            android:imeActionId="@+id/FilterMi"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionUnspecified" android:inputType="textPassword"
+            android:maxLines="1" android:singleLine="true"
+            android:textColor="#F5F5F5"
+            android:textColorHint="#F5F5F5"/>
+        </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText android:id="@+id/FilterCost" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:hint="Filter by cost"
+                android:imeActionId="@+id/FilterMi"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified" android:inputType="textPassword"
+                android:maxLines="1" android:singleLine="true"
+                android:textColor="#F5F5F5"
+                android:textColorHint="#F5F5F5" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/filterSubmit" style="?android:textAppearanceSmall"
+            android:layout_width="267dp" android:layout_height="wrap_content"
+            android:text="Submit"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/loginsize"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#00bbb3"
+            android:layout_alignBottom="@+id/login_form"
+            android:layout_alignLeft="@+id/button"
+            android:layout_alignStart="@+id/button"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp"/>
 
     </android.support.design.widget.AppBarLayout>
 

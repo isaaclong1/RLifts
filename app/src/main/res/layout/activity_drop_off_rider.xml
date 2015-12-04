@@ -1,49 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context="ucr.cs180.rlifts.DropOffRider"
-    android:background="#263238" >
+    android:layout_height="match_parent" tools:context="ucr.cs180.rlifts.DriverFragment" android:background="#263238">
+    <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:measureAllChildren="false">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
-
-            <AutoCompleteTextView android:id="@+id/prompt_string" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:hint="@string/prompt_random_string"
-                android:inputType="textEmailAddress" android:maxLines="1"
+        <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <AutoCompleteTextView android:id="@+id/start" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:hint="Enter driver completion code" android:maxLines="1"
                 android:singleLine="false"
-                android:textColor="#F5F5F5"
+                android:textColor="#FFFFFF"
                 android:textIsSelectable="false"
-                android:textColorHint="#F5F5F5" />
-        <Button
-            android:id="@+id/submit" style="?android:textAppearanceSmall"
-            android:layout_width="267dp" android:layout_height="wrap_content"
-            android:text="Submit"
-            android:layout_gravity="center_horizontal"
-            android:textSize="@dimen/loginsize"
-            android:textStyle="bold"
-            android:textColor="#ffffff"
-            android:background="#00bbb3"
-            android:layout_alignBottom="@+id/login_form"
-            android:layout_alignLeft="@+id/button"
-            android:layout_alignStart="@+id/button"
-            android:layout_marginBottom="30dp"
-            android:layout_marginTop="30dp"
-            android:onClick="randomStringClick"/>
+                android:textColorHint="#FFFFFF" />
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+            <Button
+                android:layout_width="267dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/stringclick"
+                android:layout_gravity="center_horizontal"
+                android:text="Submit"
+                android:textStyle="bold|normal"
+                android:textSize="@dimen/loginsize"
+                android:textColor="#fefefe"
+                android:background="#00bbb3"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="randomStringClick"/>
 
-    </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_drop_off_rider" />
-
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
-
-</android.support.design.widget.CoordinatorLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

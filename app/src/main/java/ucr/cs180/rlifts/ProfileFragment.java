@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.joda.time.Years;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import org.joda.time.LocalDate;
 
 
 /**
@@ -164,8 +166,24 @@ public class ProfileFragment extends Fragment {
         nickText.setText(nick);
         bdayText.setText(bday);
         phoneText.setText(phone);
-        ageText.setText(age);
+
         tokenText.setText(tokens);
+
+        //calculate BDAY
+        String month = bday.substring(0,2);
+        String day = bday.substring(3,5);
+        String year = bday.substring(6);
+        int monthInt = Integer.parseInt(month);
+        int dayInt = Integer.parseInt(day);
+        int yearInt = Integer.parseInt(year);
+        LocalDate birthdate = new LocalDate(yearInt,monthInt,dayInt);
+        LocalDate currentDate = new LocalDate();
+        Years age = Years.yearsBetween(birthdate,currentDate);
+
+        String ageString = age.toString();
+        ageString = ageString.substring(1,ageString.length()-1);
+
+        ageText.setText(ageString);
 
         // TODO: decode the image and display it here
         // follow the stack overflow: byte[] gets decode, and bitmap gets string, then bitmap goes
@@ -176,10 +194,10 @@ public class ProfileFragment extends Fragment {
         image.setImageBitmap(decodedByte);
         unameText.setText("Username: " + uname);
         emailText.setText("Email: " + email);
-        nickText.setText("Nickname: " + nick);
+        //nickText.setText("Nickname: " + nick);
         bdayText.setText("Birthday : " + bday);
         phoneText.setText("Phone Number: " + phone);
-        ageText.setText("Age: " + age);
+        ageText.setText("Age: " + ageString);
         tokenText.setText("Ride Tokens: " + tokens);
 
         return base;
