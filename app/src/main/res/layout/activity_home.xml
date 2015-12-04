@@ -23,5 +23,9 @@
         android:layout_width="wrap_content" android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_home" app:menu="@menu/activity_home_drawer" />
+    <android.support.design.widget.NavigationView android:id="@+id/filter_options"
+        android:layout_width="wrap_content" android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:headerLayout="@layout/nav_header_home" app:menu="@menu/rider_fragment_filter_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

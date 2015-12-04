@@ -103,6 +103,8 @@ public class HomeActivity extends AppCompatActivity
         }
 
         if (flag) {
+            driver_flag = 1;
+            //messageRunnable.run();
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
             showAlertforDriver();
@@ -112,17 +114,6 @@ public class HomeActivity extends AppCompatActivity
 
         } else {
             Toast.makeText(getApplicationContext(),"Invalid Address!", Toast.LENGTH_LONG).show();
-        }
-
-
-
-        if(driver_flag == 0 && flag == true)
-        {
-            Intent intent = new Intent(this, DriverRegistration.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("UID", uid);
-            intent.putExtras(bundle);
-            startActivity(intent);
         }
     }
 
@@ -151,6 +142,7 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         //drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -258,8 +250,10 @@ public class HomeActivity extends AppCompatActivity
 
         Fragment fragment = null;
         RiderFragment riderMapFragment = new RiderFragment(); // All fragments should be initialized this way
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (id == R.id.nav_profile) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
             System.out.println("handling the profile view!");
             // TODO: get the photo from local file and pass it through as encoded string
             fragment = ProfileFragment.newInstance("string1", "string2", profileData, picture);
@@ -281,6 +275,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_driver) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
             System.out.println("handling the driver view!");
             new valid_driver().execute();
             synchronized (lock) {
@@ -316,9 +311,17 @@ public class HomeActivity extends AppCompatActivity
                     "Logout Successful", Toast.LENGTH_LONG).show();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             ha.removeCallbacks(messageRunnable);
+            driver_flag = null;
             startActivity(intent);
+            FragmentManager fm = getFragmentManager();
+            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                fm.popBackStack();
+            }
+
+            finish();
 
         } else if(id == R.id.nav_payment) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
             System.out.println("handling payment fragment view!");
             fragment = PaymentListFragment.newInstance("string1", "string2");
             FragmentManager fragmentManager = getFragmentManager();
@@ -326,7 +329,6 @@ public class HomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Add Tokens");
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
