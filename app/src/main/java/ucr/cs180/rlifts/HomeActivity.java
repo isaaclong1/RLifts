@@ -29,8 +29,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -49,6 +51,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,6 +64,11 @@ public class HomeActivity extends AppCompatActivity
     private EditText StartView;
     private EditText DestinationView;
     private EditText DepartureView;
+
+    private TimePicker timePicker1;
+    private DatePicker datePicker1;
+    private org.joda.time.DateTime leaveTime;
+
     private static String uid;
     private JSONArray send_over = null;
     private static boolean flag = false;
@@ -106,7 +114,20 @@ public class HomeActivity extends AppCompatActivity
         DepartureView = (EditText) findViewById(R.id.leaveTime);
         String start = StartView.getText().toString();
         String dest = DestinationView.getText().toString();
-        GoogleDistanceRequest gdr = new GoogleDistanceRequest();
+
+        timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
+        datePicker1 = (DatePicker) findViewById(R.id.datePicker1);
+        int hour = timePicker1.getCurrentHour();
+        int min = timePicker1.getCurrentMinute();
+        int day = datePicker1.getDayOfMonth();
+        int month = datePicker1.getMonth();
+        int year = datePicker1.getYear();
+        org.joda.time.DateTime date = new org.joda.time.DateTime(year, month, day, hour, min);
+        System.out.println("date: " + date);
+        leaveTime = date;
+        System.out.println("hour: " + hour + "\nminute: " + min + "\nday: " + day + "\nmonth: " + month + "\nyear: " + year);
+
+        GoogleDistanceRequest gdr = new GoogleDistanceRequest(leaveTime);
 
         boolean flag = false;
         try {
@@ -476,6 +497,8 @@ public class HomeActivity extends AppCompatActivity
         // start the paypal activity here
         //TODO: send over the string id with the intent, that way you know how many tokens they selected.
         Intent intent = new Intent(HomeActivity.this, PaypalActivity.class);
+        intent.putExtra("EXTRA_MENU_ID", id);
+        intent.putExtra("EXTRA_UID", uid);
         startActivity(intent);
     }
 
