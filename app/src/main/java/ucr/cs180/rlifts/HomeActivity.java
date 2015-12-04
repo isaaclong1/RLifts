@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity
     FloatingActionButton fab;
     private static MySpinnerDialog myInstance;
     private final Object lock = new Object();
+    private static String random = null;
 
 
 
@@ -158,6 +159,7 @@ public class HomeActivity extends AppCompatActivity
             Intent intent = new Intent(this, DriverRegistration.class);
             Bundle bundle = new Bundle();
             bundle.putString("UID", uid);
+            bundle.putString("RID", rider_id);
             intent.putExtras(bundle);
             startActivity(intent);
         }
@@ -260,7 +262,11 @@ public class HomeActivity extends AppCompatActivity
                     lock.notify();
                 }
                 dialog.dismiss();
+                Bundle bundle = new Bundle();
+                bundle.putString("UID", uid);
+                bundle.putString("Random", random);
                 Intent intent = new Intent(getApplicationContext(), DropOffRider.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
 
             }
@@ -290,7 +296,8 @@ public class HomeActivity extends AppCompatActivity
 
     public void showRiderMessage(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your driver has accepted your ride. Here is your ride completion code: " + randomString() + ". Please give this to your driver upon ride completion").create();
+        random = randomString();
+        builder.setMessage("Your driver has accepted your ride. Here is your ride completion code: " + random + ". Please give this to your driver upon ride completion").create();
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) // yes buton
@@ -300,6 +307,7 @@ public class HomeActivity extends AppCompatActivity
         });
         builder.setTitle("NOTIFICATION");
         builder.show();
+        new updateRiderTokens().execute();
     }
 
     @Override
@@ -338,6 +346,7 @@ public class HomeActivity extends AppCompatActivity
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             getSupportActionBar().setTitle("Profile");
+            new getProfileInformation().execute();
 
         } else if (id == R.id.nav_rider) {
             System.out.println("handling the rider view!");
@@ -738,6 +747,52 @@ public class HomeActivity extends AppCompatActivity
                     for (int i = 0; i < response.length(); i++) {
                         if (response.getJSONObject(i).get("status").equals("ok")) {
                             System.out.println("Successfully received confirmation from server for getting rides.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
+
+    private class updateRiderTokens extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Users", "Users");
+                data.put("queryType", "addTokens");
+                data.put("UID", uid);
+                data.put("token", -10.0);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+                System.out.println(data);
+
+                networkRequest.send("../cgi-bin/db-modify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                System.out.println("Response in updateTokens home activity async task: " + response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for token update.");
                             //return true;
                         }
                     }

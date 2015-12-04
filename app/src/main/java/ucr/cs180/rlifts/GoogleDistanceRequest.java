@@ -111,7 +111,7 @@ public class GoogleDistanceRequest{
                 db_duration = matrix.rows[0].elements[0].duration.humanReadable;
                 db_pickup = matrix.originAddresses[0];
                 db_destination = matrix.destinationAddresses[0];
-                db_costFinal = 0.0;
+                db_costFinal = 10.0;
                 System.out.println("Your pickup location is: " + db_pickup);
             } catch (Exception e) {
                 status = false;

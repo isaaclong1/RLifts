@@ -22,7 +22,7 @@
             android:textIsSelectable="false"
             android:textColorHint="#F5F5F5" />
         <Button
-            android:id="@+id/submit" style="?android:textAppearanceSmall"
+            android:id="@+id/submitButton" style="?android:textAppearanceSmall"
             android:layout_width="267dp" android:layout_height="wrap_content"
             android:text="Submit"
             android:layout_gravity="center_horizontal"
@@ -30,12 +30,9 @@
             android:textStyle="bold"
             android:textColor="#ffffff"
             android:background="#00bbb3"
-            android:layout_alignBottom="@+id/login_form"
-            android:layout_alignLeft="@+id/button"
-            android:layout_alignStart="@+id/button"
             android:layout_marginBottom="30dp"
             android:layout_marginTop="30dp"
-            android:onClick="randomStringClick"/>
+            android:onClick="onClick"/>
 
 
     </android.support.design.widget.AppBarLayout>

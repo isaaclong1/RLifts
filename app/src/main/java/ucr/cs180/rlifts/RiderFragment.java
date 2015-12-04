@@ -96,7 +96,6 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
     public static List<String[]> originDestination;
     public GeoApiContext context;
 
-
     public static LatLng lastLoc;
 
 
@@ -148,7 +147,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                             .addAll(decodedPath)
                             .width(15)
                             .color(routeColor);
-                    myProgress = new Wrapper(destinationRoute,routeOptions, uidVal);
+                    myProgress = new Wrapper(destinationRoute,routeOptions, uidVal );
                     publishProgress(myProgress);
 
                 } catch (Exception e) {
@@ -181,11 +180,13 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
         public final String mDestination;
         public final PolylineOptions mLineOps;
         public final String driverID;
+        //public final String departure_Time;
 
         public Wrapper(String myString, PolylineOptions myInteger, String dID){
             mDestination = myString;
             mLineOps = myInteger;
             driverID = dID;
+            //departure_Time = departure;
         }
     }
 
@@ -224,7 +225,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setMessage("Driver: \nDestination: " + arg0.getTitle() + "\nDeparture Time: \nCost: ")
+                builder.setMessage("Driver " + arg0.getTitle() + "\nDeparture Time:  \nCost: $10")
                         .setTitle("Would you like to take this ride?");
 
                 // 2a. Add the buttons
@@ -320,6 +321,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
             String duration = "";
             String ride_string = "";
             String uid = "";
+            String departure ="";
             String mpickup = "Pick Up:";
             String mdestin = " \nDestination:";
             String mdist = "\nDistance: ";
@@ -345,6 +347,7 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 duration = ride.getString("duration");
                 uid = ride.getString("UID");
                 cost = ride.getString("cost");
+                departure = ride.getString("leave_time");
                 String[] startFin = new String[3];
                 startFin[0] = uid;
                 startFin[1] = pickup;
@@ -352,7 +355,6 @@ public class RiderFragment extends Fragment implements OnMapReadyCallback,
                 originDestination.add(startFin);
 
                 sendby_id = uid;
-                System.out.println("UID here: " + uid);
 
                 ride_string = mpickup+ pickup + newline + mdestin + destination + newline + mdist + distance + newline + mcost + cost + newline + mdur + duration + newline + mdriverID + uid;
 
