@@ -79,10 +79,6 @@
         \u2022Logout: Logout of your account.\n
         Thanks for using RLifts! :)
         \n</string>
-    <string name="rider_filter_header">Ride Filtering Options:</string>
-    <string name="rider_filter_leave_time">Leave Time:</string>
-    <string name="rider_filter_cost">Cost</string>
-
 
 
 

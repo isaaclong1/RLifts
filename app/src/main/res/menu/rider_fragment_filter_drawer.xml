@@ -2,21 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_distance" android:icon="@drawable/profile"
+        <item android:id="@+id/nav_profile" android:icon="@drawable/profile"
             android:title="Distance"
-            android:checked="true">
-            <menu>
-                <item android:id="@+id/dist_five"
-                    android:title="5mi"
-                    android:checkable="true"/>
-                <item android:id="@+id/dist_ten"
-                    android:title="10mi"
-                    android:checkable="true"/>
-            </menu>
-        </item>
-        <item android:id="@+id/nav_leave_time" android:icon="@drawable/ic_action_name2"
+            android:checked="true"/>
+        <item android:id="@+id/nav_rider" android:icon="@drawable/ic_action_name2"
             android:title="Leave Time" />
-        <item android:id="@+id/nav_cost" android:icon="@drawable/car186_2"
+        <item android:id="@+id/nav_driver" android:icon="@drawable/car186_2"
             android:title="Cost" />
 
         <!--<item android:title="Communicate">
