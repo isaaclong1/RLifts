@@ -3,6 +3,7 @@ package ucr.cs180.rlifts;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,11 +20,16 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 
 public class PaypalActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private int priceInt;
+    private String uid;
 
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
@@ -70,7 +76,24 @@ public class PaypalActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void startPaypal(View v) {
-        PayPalPayment payment = new PayPalPayment(new BigDecimal("10.00"), "USD", "10 Tokens",
+        Bundle extras = getIntent().getExtras();
+        String id = extras.getString("EXTRA_MENU_ID");
+        uid = extras.getString("EXTRA_UID");
+        // hard coding this for now
+        String price = "";
+        if(id.equals("1")) {
+            price = "10.00";
+            priceInt = 10;
+        }
+        else if(id.equals("2")) {
+            price = "50.00";
+            priceInt = 50;
+        }
+        else if(id.equals("3")) {
+            price = "100.00";
+            priceInt = 100;
+        }
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(price), "USD", "Tokens",
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
         Intent intent = new Intent(this, PaymentActivity.class);
@@ -88,6 +111,10 @@ public class PaypalActivity extends AppCompatActivity implements View.OnClickLis
         if (resultCode == Activity.RESULT_OK) {
             PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
             Toast.makeText(getApplicationContext(), "Your payment was successful.", Toast.LENGTH_LONG).show();
+
+            // TODO: make the call to network to update the token count
+            new updateTokens().execute();
+
             if (confirm != null) {
                 try {
                     Log.i("paymentExample", confirm.toJSONObject().toString(4));
@@ -113,4 +140,51 @@ public class PaypalActivity extends AppCompatActivity implements View.OnClickLis
         //TODO: send them back to home activity. Is it possible to implement all this in a fragment instead?
     }
 
+    private class updateTokens extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                NetworkRequest networkRequest = new NetworkRequest("http://45.55.29.36/");
+
+                JSONObject data = new JSONObject();
+                data.put("Users", "Users");
+                data.put("queryType", "addTokens");
+                data.put("UID", uid);
+                data.put("token", priceInt);
+
+                JSONArray cred = new JSONArray();
+                cred.put(data);
+                System.out.println(data);
+
+                networkRequest.send("../cgi-bin/db-modify.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
+                JSONArray response = networkRequest.getResponse();
+                System.out.println("Response in updateTokens home activity async task: " + response);
+                if (response != null) {
+                    for (int i = 0; i < response.length(); i++) {
+                        if (response.getJSONObject(i).get("status").equals("ok")) {
+                            System.out.println("Successfully received confirmation from server for token update.");
+                            //return true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { // for now all exceptions will return false
+                System.out.println("Debug in background task:\n" + e.getMessage());
+                //return false;
+            }
+            //return false;
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
+
 }
+

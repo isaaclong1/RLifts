@@ -396,12 +396,10 @@ public class DriverRegistration extends AppCompatActivity {
             mAuthTask = null;
             if(driver_status) {
                 Toast.makeText(getApplicationContext(), "Driver registration complete!", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(mActivity, HomeActivity.class);
-                startActivity(intent);
             }
             else{
                 Toast.makeText(getApplicationContext(),
-                        "Car has been registered! Try again.", Toast.LENGTH_LONG).show();
+                        "This car has already been registered! Try again.", Toast.LENGTH_LONG).show();
             }
             waitDialog.dismiss();
             finish();

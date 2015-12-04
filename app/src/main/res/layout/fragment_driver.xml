@@ -31,6 +31,17 @@
         android:textIsSelectable="false"
         android:textColorHint="#000000" />
 
+    <DatePicker android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/datePicker1">
+
+    </DatePicker>
+
+    <TimePicker
+        android:id="@+id/timePicker1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/Post_ride_button" style="?android:textAppearanceSmall"
         android:layout_width="267dp" android:layout_height="wrap_content"

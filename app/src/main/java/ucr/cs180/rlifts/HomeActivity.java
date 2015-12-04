@@ -24,7 +24,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -36,6 +38,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import javax.xml.transform.Result;
 
+
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +56,9 @@ public class HomeActivity extends AppCompatActivity
     private EditText StartView;
     private EditText DestinationView;
     private EditText DepartureView;
+    private TimePicker timePicker1;
+    private DatePicker datePicker1;
+    private org.joda.time.DateTime leaveTime;
     private static String uid;
     private static String rider_id;
     private JSONArray send_over;
@@ -70,10 +77,14 @@ public class HomeActivity extends AppCompatActivity
     private final Object lock = new Object();
 
 
+
+
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
+            if(driver_flag != null && driver_flag == 1){
                 new Get_Driver_Message().execute();
+            }
 
 
             if (flag == true && driver_flag != null && driver_flag == 1) {
@@ -107,9 +118,22 @@ public class HomeActivity extends AppCompatActivity
         StartView = (EditText) findViewById(R.id.start);
         DestinationView = (EditText) findViewById(R.id.destination);
         DepartureView = (EditText) findViewById(R.id.leaveTime);
+        timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
+        datePicker1 = (DatePicker) findViewById(R.id.datePicker1);
+        int hour = timePicker1.getCurrentHour();
+        int min = timePicker1.getCurrentMinute();
+        int day = datePicker1.getDayOfMonth();
+        int month = datePicker1.getMonth();
+        int year = datePicker1.getYear();
+        org.joda.time.DateTime date = new org.joda.time.DateTime(year, month, day, hour, min);
+        System.out.println("date: " + date);
+        leaveTime = date;
+
+        System.out.println("hour: " + hour + "\nminute: " + min + "\nday: " + day + "\nmonth: " + month + "\nyear: " + year);
+
         String start = StartView.getText().toString();
         String dest = DestinationView.getText().toString();
-        GoogleDistanceRequest gdr = new GoogleDistanceRequest();
+        GoogleDistanceRequest gdr = new GoogleDistanceRequest(leaveTime);
 
         boolean flag = false;
         try {
@@ -119,6 +143,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         if (flag) {
+            //driver_flag = 1;
             Toast.makeText(getApplicationContext(),
                     "Ride posted!", Toast.LENGTH_LONG).show();
             showAlertforDriver();
@@ -158,7 +183,7 @@ public class HomeActivity extends AppCompatActivity
 
             }
         });
-
+        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -166,6 +191,7 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         //drawer.openDrawer(Gravity.LEFT);
         toggle.syncState();
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -238,6 +264,7 @@ public class HomeActivity extends AppCompatActivity
                     lock.notify();
                 }
                 dialog.dismiss();
+
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -322,8 +349,10 @@ public class HomeActivity extends AppCompatActivity
 
         Fragment fragment = null;
         RiderFragment riderMapFragment = new RiderFragment(); // All fragments should be initialized this way
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (id == R.id.nav_profile) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
             System.out.println("handling the profile view!");
             fab.setVisibility(View.INVISIBLE);
 
@@ -349,6 +378,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_driver) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
             System.out.println("handling the driver view!");
             new valid_driver().execute();
             synchronized (lock) {
@@ -379,15 +409,24 @@ public class HomeActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
             getSupportActionBar().setTitle("Driver");
 
+
         } else if(id == R.id.logout){
             Intent intent = new Intent(this, LoginActivity.class);
             Toast.makeText(getApplicationContext(),
                     "Logout Successful", Toast.LENGTH_LONG).show();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             ha.removeCallbacks(messageRunnable);
+            //driver_flag = null;
             startActivity(intent);
+            FragmentManager fm = getFragmentManager();
+            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                fm.popBackStack();
+            }
+
+            finish();
 
         } else if(id == R.id.nav_payment) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
             System.out.println("handling payment fragment view!");
             fab.setVisibility(View.INVISIBLE);
 
@@ -397,7 +436,6 @@ public class HomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Add Tokens");
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -426,7 +464,10 @@ public class HomeActivity extends AppCompatActivity
 
         // start the paypal activity here
         //TODO: send over the string id with the intent, that way you know how many tokens they selected.
+
         Intent intent = new Intent(HomeActivity.this, PaypalActivity.class);
+        intent.putExtra("EXTRA_MENU_ID", id);
+        intent.putExtra("EXTRA_UID", uid);
         startActivity(intent);
     }
 
@@ -667,6 +708,7 @@ public class HomeActivity extends AppCompatActivity
             }
             return true;
         }
+
         @Override
         protected void onProgressUpdate(Void... values) {
 

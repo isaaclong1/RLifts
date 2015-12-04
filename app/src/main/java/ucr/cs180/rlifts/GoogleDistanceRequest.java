@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -56,8 +57,9 @@ public class GoogleDistanceRequest{
     public JSONObject response;
     private HomeActivity.MySpinnerDialog waitOnGDR;
     private Object lock;
-    public GoogleDistanceRequest(){
-
+    private org.joda.time.DateTime leaveTime;
+    public GoogleDistanceRequest(org.joda.time.DateTime leaveTime) {
+        this.leaveTime = leaveTime;
     }
 
     public boolean makeConnection(String start, String destination, String uid) throws InterruptedException {
@@ -179,6 +181,7 @@ public class GoogleDistanceRequest{
                 data.put("start_longitude", pickupCoordinates[1]);
                 data.put("end_latitude", destinationCoordinates[0]);
                 data.put("end_longitude", destinationCoordinates[1]);
+                data.put("leave_time", leaveTime);
                 //data.put("cost", );
 
                 JSONArray cred = new JSONArray();

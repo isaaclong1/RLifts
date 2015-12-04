@@ -148,5 +148,4 @@ public class PaymentListFragment extends Fragment implements AbsListView.OnItemC
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
-
 }
