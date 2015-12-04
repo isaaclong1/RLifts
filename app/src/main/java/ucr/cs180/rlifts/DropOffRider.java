@@ -24,16 +24,16 @@ public class DropOffRider extends AppCompatActivity {
     public void randomStringClick(View view){
         Toast.makeText(getApplicationContext(),
                 "Ride complete. Tokens have been transferred to your account.", Toast.LENGTH_LONG).show();
-        finish();
+        //finish();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drop_off_rider);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        /*setSupportActionBar(toolbar);
-
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Ride completion");
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -82,10 +82,7 @@ public class HomeActivity extends AppCompatActivity
     Runnable messageRunnable = new Runnable() {
         @Override
         public void run() {
-            if(driver_flag != null && driver_flag == 1){
-                new Get_Driver_Message().execute();
-            }
-
+            new Get_Driver_Message().execute();
 
             if (flag == true && driver_flag != null && driver_flag == 1) {
                 showAlert();
@@ -102,7 +99,7 @@ public class HomeActivity extends AppCompatActivity
     Handler mHandler;
 
     public String randomString() {
-        int length = 10;
+        int length = 6;
         char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
         Random random = new SecureRandom();
         char[] result = new char[length];
@@ -183,7 +180,7 @@ public class HomeActivity extends AppCompatActivity
 
             }
         });
-        */
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -201,7 +198,6 @@ public class HomeActivity extends AppCompatActivity
         if (extras != null) {
             String value = extras.getString("global_uid");
             uid = value;
-            System.out.println("LALA " + uid);
         }
 
         new Get_Rides().execute();
@@ -264,6 +260,8 @@ public class HomeActivity extends AppCompatActivity
                     lock.notify();
                 }
                 dialog.dismiss();
+                Intent intent = new Intent(getApplicationContext(), DropOffRider.class);
+                startActivity(intent);
 
             }
         });
@@ -273,6 +271,7 @@ public class HomeActivity extends AppCompatActivity
             {
                 dialog.dismiss();
                 ride_taken = false;
+                //need to send message here saying the driver delcined the ride
             }
         });
         builder.setTitle("NOTIFICATION");
@@ -287,11 +286,6 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
             }*/
-            if(start_intent) {
-                System.out.println("Inside start intent");
-                Intent intent = new Intent(this, DropOffRider.class);
-                startActivity(intent);
-            }
         }
 
     public void showRiderMessage(){
@@ -317,24 +311,6 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, setting.class);
-            Bundle bundle = new Bundle();
-            try {
-
-                bundle.putString("name", profileData.getJSONObject(0).getString("uname"));
-                bundle.putString("lastname", profileData.getJSONObject(0).getString("uname"));
-                bundle.putString("phonenumber", profileData.getJSONObject(0).getString("phone_num"));
-                bundle.putString("birthday", profileData.getJSONObject(0).getString("birthday"));
-                bundle.putString("email", profileData.getJSONObject(0).getString("email"));
-                bundle.putString("first_name", profileData.getJSONObject(0).getString("first_name"));
-                bundle.putString("last_name", profileData.getJSONObject(0).getString("last_name"));
-
-                bundle.putString("UID", uid);
-            }
-            catch (JSONException e) { return false;}
-            intent.putExtras(bundle);
-
-            startActivity(intent);
             return true;
         }
 
