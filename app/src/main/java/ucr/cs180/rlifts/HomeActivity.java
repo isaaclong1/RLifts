@@ -2,6 +2,7 @@ package ucr.cs180.rlifts;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ExpandableListActivity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.location.Location;
@@ -24,8 +25,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.app.AlertDialog;
@@ -47,23 +50,32 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener,
+        implements NavigationView.OnNavigationItemSelectedListener, ExpandableListView.OnChildClickListener,
+        ProfileFragment.OnFragmentInteractionListener,
         RiderFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener,
         Tutorial.OnFragmentInteractionListener, PaymentListFragment.OnFragmentInteractionListener {
 
     private EditText StartView;
     private EditText DestinationView;
     private EditText DepartureView;
+
     private TimePicker timePicker1;
     private DatePicker datePicker1;
     private org.joda.time.DateTime leaveTime;
+
     private static String uid;
     private static String rider_id;
     private JSONArray send_over;
 
     private static Boolean flag = false;
+    private JSONArray send_over = null;
+    private static boolean flag = false;
     private static boolean run_showalert = true;
     private static Boolean rider_flag = false;
     private static String m_id;
@@ -76,6 +88,12 @@ public class HomeActivity extends AppCompatActivity
     private static MySpinnerDialog myInstance;
     private final Object lock = new Object();
     private static String random = null;
+    RiderFragment riderMapFragment;
+    //Rider Filtering ExpandableListView Variables
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
 
 
 
@@ -116,6 +134,9 @@ public class HomeActivity extends AppCompatActivity
         StartView = (EditText) findViewById(R.id.start);
         DestinationView = (EditText) findViewById(R.id.destination);
         DepartureView = (EditText) findViewById(R.id.leaveTime);
+        String start = StartView.getText().toString();
+        String dest = DestinationView.getText().toString();
+
         timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
         datePicker1 = (DatePicker) findViewById(R.id.datePicker1);
         int hour = timePicker1.getCurrentHour();
@@ -126,11 +147,8 @@ public class HomeActivity extends AppCompatActivity
         org.joda.time.DateTime date = new org.joda.time.DateTime(year, month, day, hour, min);
         System.out.println("date: " + date);
         leaveTime = date;
-
         System.out.println("hour: " + hour + "\nminute: " + min + "\nday: " + day + "\nmonth: " + month + "\nyear: " + year);
 
-        String start = StartView.getText().toString();
-        String dest = DestinationView.getText().toString();
         GoogleDistanceRequest gdr = new GoogleDistanceRequest(leaveTime);
 
         boolean flag = false;
@@ -168,6 +186,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        riderMapFragment = new RiderFragment(); // All fragments should be initialized this way
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -176,24 +195,30 @@ public class HomeActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
 
+
+        /*
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+       
             }
-        });
+        }); */
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        //drawer.openDrawer(Gravity.LEFT);
-        toggle.syncState();
+
+                //drawer.openDrawer(Gravity.LEFT);
+                toggle.syncState();
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        ExpandableListView riderFilterNav = (ExpandableListView) findViewById(R.id.filter_exp_list);
+        riderFilterNav.setOnChildClickListener(this);
 
 
         Bundle extras = getIntent().getExtras();
@@ -201,8 +226,19 @@ public class HomeActivity extends AppCompatActivity
             String value = extras.getString("global_uid");
             uid = value;
         }
-
         new Get_Rides().execute();
+        synchronized (lock) {
+            while (send_over == null) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        riderMapFragment = riderMapFragment.newInstance(riderMapFragment,"string1", "string2", send_over, uid); // had to put this here so that it has access to the uid sent over from LoginActivity
+
+        //new Get_Rides().execute();
         ha.postDelayed(messageRunnable, 1000);
 
 
@@ -211,6 +247,69 @@ public class HomeActivity extends AppCompatActivity
         fragment = Tutorial.newInstance("string1", "string2");
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        //Rider Filtering ExpandableListView Preparations
+        // get the listview
+        expListView = (ExpandableListView) findViewById(R.id.filter_exp_list);
+
+        // preparing list data
+        prepareListData();
+
+        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+    }
+
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v,
+                                int groupPosition, int childPosition, long id) {
+        String value = listDataChild.get(
+                listDataHeader.get(groupPosition)).get(
+                childPosition);
+
+        DistanceCalculator distToRide = new DistanceCalculator();
+        if( listDataChild.get(
+                listDataHeader.get(groupPosition)).get(
+                childPosition) == "5mi" ){
+            riderMapFragment.filterDistance(5);
+
+        }
+        else if(listDataChild.get(
+                    listDataHeader.get(groupPosition)).get(
+                    childPosition) == "10mi" ){
+                riderMapFragment.filterDistance(10);
+        }
+        else if(listDataChild.get(
+                listDataHeader.get(groupPosition)).get(
+                childPosition) == "15mi" ) {
+            riderMapFragment.filterDistance(15);
+        }
+        else if(listDataChild.get(
+                listDataHeader.get(groupPosition)).get(
+                childPosition) == "20mi" ) {
+            riderMapFragment.filterDistance(20);
+        }
+        else if(listDataChild.get(
+                listDataHeader.get(groupPosition)).get(
+                childPosition) == "25mi" ) {
+            riderMapFragment.filterDistance(25);
+        }
+        else if(listDataChild.get(
+                listDataHeader.get(groupPosition)).get(
+                childPosition) == "50mi" ) {
+            riderMapFragment.filterDistance(50);
+        }
+
+        Toast.makeText(
+                getApplicationContext(),
+                listDataHeader.get(groupPosition)
+                        + " : "
+                        + listDataChild.get(
+                        listDataHeader.get(groupPosition)).get(
+                        childPosition), Toast.LENGTH_SHORT)
+                .show();
+        return false;
     }
 
     @Override
@@ -310,6 +409,8 @@ public class HomeActivity extends AppCompatActivity
         new updateRiderTokens().execute();
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -325,6 +426,26 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void prepareListData() {
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+
+        // Adding child data
+        listDataHeader.add("Distance");
+
+        // Adding child data
+        List<String> distance = new ArrayList<String>();
+        distance.add("5mi");
+        distance.add("10mi");
+        distance.add("15mi");
+        distance.add("20mi");
+        distance.add("25mi");
+        distance.add("50mi");
+
+        listDataChild.put(listDataHeader.get(0), distance); // Header, Child data
+
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -332,8 +453,12 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         Fragment fragment = null;
-        RiderFragment riderMapFragment = new RiderFragment(); // All fragments should be initialized this way
+        //RiderFragment riderMapFragment = new RiderFragment(); // All fragments should be initialized this way
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        if (id == R.id.nav_distance){
+            System.out.println(id);
+        }
 
         if (id == R.id.nav_profile) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,GravityCompat.END);
@@ -353,12 +478,12 @@ public class HomeActivity extends AppCompatActivity
             fab.setVisibility(View.VISIBLE);
 
             //fragment = RiderFragment.newInstance("string1", "string2", send_over, uid);
-            riderMapFragment = riderMapFragment.newInstance(riderMapFragment,"string1", "string2", send_over, uid);
+
             // Insert the fragment by replacing any existing fragment
-            new Get_Rides().execute();
+
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, riderMapFragment).commit();
-            new Get_Rides().execute();
+            //new Get_Rides().execute();
             getSupportActionBar().setTitle("Rider");
 
 
@@ -449,7 +574,6 @@ public class HomeActivity extends AppCompatActivity
 
         // start the paypal activity here
         //TODO: send over the string id with the intent, that way you know how many tokens they selected.
-
         Intent intent = new Intent(HomeActivity.this, PaypalActivity.class);
         intent.putExtra("EXTRA_MENU_ID", id);
         intent.putExtra("EXTRA_UID", uid);
@@ -622,6 +746,9 @@ public class HomeActivity extends AppCompatActivity
                 networkRequest.send("../cgi-bin/db-select.py", "POST", cred); // scripts should not be hard coded, create a structure and store all somewhere
                 JSONArray response = networkRequest.getResponse();
                 send_over = response;
+                synchronized (lock) {
+                    lock.notify();
+                }
                 System.out.println("Response in get_rides home activity async task: " + response);
                 if (response != null) {
                     for (int i = 0; i < response.length(); i++) {

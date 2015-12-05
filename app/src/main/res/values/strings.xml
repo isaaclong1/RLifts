@@ -78,6 +78,22 @@
         If a rider requests your ride, you\'ll receive a notification </string>
     <string name="text_4">Add mile tokens to your account via PayPal </string>
     <string name="text_5">Look at the rides and drivers you have requested in the past.</string>
+        From this menu, you have a few options, described in detail below.\n
+        \u2022Profile: View your profile information.\n
+        \u2022Rider: Opens a list of rides near you that you can request. You can filter the list by.... (to be added)\n
+        \u2022Driver: Allows you to register as a driver and post a ride. Once your ride is posted, riders near you will be able to see it and request your ride.
+        If a rider requests your ride, you\'ll receive a notification and can either
+        accept or decline their request.\n
+        \u2022Add Tokens: Add mile tokens to your account via PayPal, which is the currency used by riders to pay drivers. If you do
+        not have enough tokens, you will not be allowed to request the ride.\n
+        \u2022Ride History: Look at the rides and drivers you have requested in the past.\n
+        \u2022Logout: Logout of your account.\n
+        Thanks for using RLifts! :)
+        \n</string>
+    <string name="rider_filter_header">Ride Filtering Options:</string>
+    <string name="rider_filter_leave_time">Leave Time:</string>
+    <string name="rider_filter_cost">Cost</string>
+
 
 
 
